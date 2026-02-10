@@ -64,7 +64,19 @@ export default defineConfig({
   // 页面头部配置：favicon 和额外的脚本
   head: [
     ["link", { rel: "icon", href: "/logo.png" }],
-    ["script", { src: "/vercel-analytics.js" }]
+    ["script", { src: "/vercel-analytics.js" }],
+    // 强制默认浅色模式（Hack）：如果用户未设置偏好，写入 'light' 到 localStorage，
+    // 这样 VitePress 会认为用户选择了浅色，从而忽略系统深色设置。
+    ["script", {}, `
+      (function() {
+        try {
+          var saved = localStorage.getItem('vitepress-theme-appearance');
+          if (!saved) {
+            localStorage.setItem('vitepress-theme-appearance', 'light');
+          }
+        } catch (e) {}
+      })()
+    `]
   ],
 
   // Vite 配置

@@ -1,103 +1,119 @@
 :root {
     --custom-backtop-ring: var(--main-page-bg);
 
-    --vp-c-brand-1: #8A5CF5;
-    --vp-c-brand-2: #a984ff;
-    --vp-c-brand-3: #aa86ff;
+    /* MacOS Blue/Purple Brand - Refined */
+    --vp-c-brand-1: #007AFF;
+    --vp-c-brand-2: #5AC8FA;
+    --vp-c-brand-3: #5856D6;
 
-    /* linkcard色卡 */
-    --custom-bg: #f0f0f0;
-    --custom-border: #dedede;
-    --custom-text: #575d65;
+    /* Linkcard - Notion Light Style */
+    --custom-bg: #FFFFFF;
+    --custom-border: #E0E0E0;
+    --custom-text: #37352F;
 
-    /* 首页按钮 */
-    --vp-button-brand-text: #F6CEEC;
-    --vp-button-brand-bg: #D939CD;
-    --vp-button-brand-hover-text: #fff;
-    --vp-button-brand-hover-bg: #fe64f1;
+    /* Home Buttons - MacOS Style */
+    --vp-button-brand-text: #FFFFFF;
+    --vp-button-brand-bg: #007AFF;
+    --vp-button-brand-hover-text: #FFFFFF;
+    --vp-button-brand-hover-bg: #0062CC;
 
-    /* 自定义阴影 */
-    --custom-shadow:0 10px 30px 0 rgb(0 0 0 / 40%);
+    /* Custom Shadow - Softer, Apple-like */
+    --custom-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 
-    /* 自定义容器 */
-    --custom-block-info-left: #cccccc;
-    --custom-block-info-bg: #fafafa;
+    /* Custom Containers - Notion Light Theme */
+    /* Info - Gray */
+    --custom-block-info-left: #9B9A97;
+    --custom-block-info-bg: #F1F1EF;
 
-    --custom-block-tip-left: #009400;
-    --custom-block-tip-bg: #e6f6e6;
+    /* Tip - Green */
+    --custom-block-tip-left: #38A169;
+    --custom-block-tip-bg: #EDF3EC;
 
-    --custom-block-warning-left: #e6a700;
-    --custom-block-warning-bg: #fff8e6;
+    /* Warning - Orange/Yellow */
+    --custom-block-warning-left: #D9730D;
+    --custom-block-warning-bg: #FFF9DB;
 
-    --custom-block-danger-left: #e13238;
-    --custom-block-danger-bg: #ffebec;
+    /* Danger - Red */
+    --custom-block-danger-left: #E03E3E;
+    --custom-block-danger-bg: #FBE4E4;
 
-    --custom-block-note-left: #4cb3d4;
-    --custom-block-note-bg: #eef9fd;
+    /* Note - Blue */
+    --custom-block-note-left: #3182CE;
+    --custom-block-note-bg: #E6F3F7;
 
-    --custom-block-important-left: #a371f7;
-    --custom-block-important-bg: #f4eefe;
+    /* Important - Purple */
+    --custom-block-important-left: #805AD5;
+    --custom-block-important-bg: #F3EEF8;
 
-    --custom-block-caution-left: #e0575b;
-    --custom-block-caution-bg: #fde4e8;
+    /* Caution - Pink */
+    --custom-block-caution-left: #D53F8C;
+    --custom-block-caution-bg: #FCE8F3;
 
-    /* 主页色卡 */
-    --main-page-bg: white;
-    --main-page-text: #3C3C43;
-    --main-page-from: #222222;
-    --main-page-to: #585858;
-    --main-page-menu: #525861;
-    --main-page-appearance: #e0e0e0;
+    /* Main Page */
+    --main-page-bg: #FFFFFF;
+    --main-page-text: #37352F;
+    --main-page-from: #F7F7F7;
+    --main-page-to: #E5E5E5;
+    --main-page-menu: #787774;
+    --main-page-appearance: #E0E0E0;
 
-    --custom-toast-bg: #00000020;
-    --custom-toast-text: #000000;
+    --custom-toast-bg: rgba(0, 0, 0, 0.8);
+    --custom-toast-text: #FFFFFF;
 }
 
 .dark {
     --custom-backtop-ring: var(--main-page-bg);
     
-    --vp-c-brand-1: #9b70ff;
-    --vp-c-brand-2: #a984ff;
-    --vp-c-brand-3: #aa86ff;
+    /* MacOS Dark Mode Brand */
+    --vp-c-brand-1: #0A84FF;
+    --vp-c-brand-2: #64D2FF;
+    --vp-c-brand-3: #5E5CE6;
 
-    /* linkcard色卡 */
-    --custom-bg: #1f1f1f;
-    --custom-border: #282828;
-    --custom-text: #969ba6;
+    /* Linkcard - Notion Dark Style */
+    --custom-bg: #2F2F2F;
+    --custom-border: #3F3F3F;
+    --custom-text: #D4D4D4;
 
-    /* 自定义阴影 */
-    --custom-shadow:0 10px 30px 0 rgb(255 255 255 / 40%);
+    /* Custom Shadow */
+    --custom-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 
-    /* 自定义容器 */
-    --custom-block-info-left: #cccccc;
-    --custom-block-info-bg: #474748;
+    /* Custom Containers - Notion Dark Theme */
+    /* Info - Gray */
+    --custom-block-info-left: #9B9A97;
+    --custom-block-info-bg: #2F2F2F;
 
-    --custom-block-tip-left: #009400;
-    --custom-block-tip-bg: #003100;
+    /* Tip - Green */
+    --custom-block-tip-left: #38A169;
+    --custom-block-tip-bg: #1C2B1F;
 
-    --custom-block-warning-left: #e6a700;
-    --custom-block-warning-bg: #4d3800;
+    /* Warning - Orange/Yellow */
+    --custom-block-warning-left: #D9730D;
+    --custom-block-warning-bg: #3A2E0E;
 
-    --custom-block-danger-left: #e13238;
-    --custom-block-danger-bg: #4b1113;
+    /* Danger - Red */
+    --custom-block-danger-left: #E03E3E;
+    --custom-block-danger-bg: #3E1B1B;
 
-    --custom-block-note-left: #4cb3d4;
-    --custom-block-note-bg: #193c47;
+    /* Note - Blue */
+    --custom-block-note-left: #3182CE;
+    --custom-block-note-bg: #192A3A;
 
-    --custom-block-important-left: #a371f7;
-    --custom-block-important-bg: #230555;
+    /* Important - Purple */
+    --custom-block-important-left: #805AD5;
+    --custom-block-important-bg: #2D213F;
 
-    --custom-block-caution-left: #e0575b;
-    --custom-block-caution-bg: #391c22;
+    /* Caution - Pink */
+    --custom-block-caution-left: #D53F8C;
+    --custom-block-caution-bg: #3A1C28;
 
-    /* 主页色卡 */
-    --main-page-bg: #050505;
-    --main-page-text: #DFDFD6;
-    --main-page-from: #f0f0f0;
-    --main-page-to: #575757;
-    --main-page-menu: #969ba6;
-    --main-page-appearance: #222222;
+    /* Main Page */
+    --main-page-bg: #191919;
+    --main-page-text: #D4D4D4;
+    --main-page-from: #202020;
+    --main-page-to: #2C2C2C;
+    --main-page-menu: #9B9A97;
+    --main-page-appearance: #3F3F3F;
 
-    --custom-toast-bg: #ffffff20;
-    --custom-toast-text: #ffffff;
+    --custom-toast-bg: rgba(255, 255, 255, 0.9);
+    --custom-toast-text: #000000;
 }

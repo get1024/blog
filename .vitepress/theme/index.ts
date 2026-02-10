@@ -87,12 +87,12 @@ export const Theme: ThemeConfig = {
     //giscus评论插件
     const { frontmatter } = useData();
     giscusTalk({
-      repo: 'get1024/get1024.github.io',
-      repoId: 'R_kgDOL1mSLA',
+      repo: 'get1024/blog',
+      repoId: 'R_kgDORMnYIQ',
       category: 'Announcements',
-      categoryId: 'DIC_kwDOL1mSLM4CfRSC',
-      mapping: 'title',
-      strict: '1',
+      categoryId: 'DIC_kwDORMnYIc4C2Id8',
+      mapping: 'pathname',
+      strict: '0',
       reactionsEnabled: '1',
       inputPosition: 'top',
       theme:'preferred_color_scheme',

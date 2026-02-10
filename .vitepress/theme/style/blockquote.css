@@ -1,7 +1,19 @@
+/* Notion-like Blockquote */
 .vp-doc blockquote {
     border-radius: 4px;
-    padding: 18px 20px 20px 15px;
+    padding: 16px 20px;
     position: relative;
-    background-color: var(--vp-c-gray-soft);
-    border-left: 6px solid var(--vp-c-brand-3);
+    background-color: transparent; /* Notion 默认引用块背景通常是透明或极淡 */
+    border-left: 3px solid var(--vp-c-text-1); /* 更细的边框，颜色跟随文本或品牌色 */
+    color: var(--vp-c-text-2); /* 稍浅的文字颜色 */
+    font-style: normal; /* 移除斜体，更现代 */
+    margin: 1rem 0;
 }
+
+/* 如果想要带背景的引用块风格，可以取消注释下面 */
+/* 
+.vp-doc blockquote {
+    background-color: var(--custom-block-info-bg); 
+    border-left-color: var(--vp-c-brand-1);
+} 
+*/

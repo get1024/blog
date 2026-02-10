@@ -1,21 +1,30 @@
-/* 全局图片样式 */
+/* 全局图片样式 - MacOS Style */
 img:not(.linkcard-img):not(.VPImage.image-src):not(.VPImage.logo):not(.titleAvatar):not(.h-8):not(.avatar-img):not(.badgeP>img) {
-    border-radius: 4px;
+    border-radius: 8px; /* 更大的圆角，类似 MacOS 窗口 */
     display: block;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin-top: 16px;
+    margin-bottom: 16px;
+    box-shadow: var(--custom-shadow); /* 添加细腻的阴影 */
+    transition: transform 0.3s ease; /* 鼠标悬停时的平滑过渡 */
+}
+
+/* 鼠标悬停微动效果 */
+img:not(.linkcard-img):not(.VPImage.image-src):not(.VPImage.logo):not(.titleAvatar):not(.h-8):not(.avatar-img):not(.badgeP>img):hover {
+    transform: scale(1.01);
 }
 
 /* 全局视频样式 */
 video {
     width: 100%;
-    border-radius: 4px;
+    border-radius: 8px;
     display: block;
     margin-left: auto;
     margin-right: auto;
+    box-shadow: var(--custom-shadow);
 }
+
 
 /* 首页图片 */
 /* img.VPImage.image-src */

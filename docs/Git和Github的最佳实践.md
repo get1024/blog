@@ -2,21 +2,24 @@
 title: Git和Github的最佳实践
 createAt: 2024-04-29 21:50:23
 updateAt: 2025-02-02 23:43:34
-tags:
+tags: 
+    - git
 ---
 
-# 配置 `.gitignore`
+# Git和Github的最佳实践
 
-## 这个 `.gitignore` 是干什么的？
+## 配置 `.gitignore`
+
+### 这个 `.gitignore` 是干什么的？
 
 `.gitignore` 文件用来声明一些**不需要被 Git 跟踪的文件**，比如： `node_modules` 、 `package-lock.json` 等等文件
 
-## 如何配置？
+### 如何配置？
 
 - **放在项目根目录**：通常在项目根目录下创建一个名为 `.gitignore` 的文件。
 - **子目录特殊需求**：如果某些子目录有不同的忽略规则，你也可以在对应子目录下再创建一个 `.gitignore`，规则只会对该目录及其子目录生效。
 
-## 基本语法规则
+### 基本语法规则
 
 | 规则       | 语法                           | 示例                         | 说明                                             |
 | -------- | ---------------------------- | -------------------------- | ---------------------------------------------- |
@@ -30,7 +33,7 @@ tags:
 | `!` 取反   | `![匹配]` 取消之前的匹配，需要写在大范围的通配之后 | `*.log!import.log`         | 忽略除了 `import.log` 之外的所有 `.log` 文件              |
 | 转义       | `\!` `\#`                    | `\!secret.txt\#secret.txt` | 忽略以 `!` 或者 `#` 开头的文件                           |
 
-## 常见示例
+### 常见示例
 
 ```
 # 操作系统生成的临时文件
@@ -59,17 +62,17 @@ node_modules/
 !important.log
 ```
 
-## 问题
+### 问题
 
 在使用 `Git` 时，如果 `.gitignore` 文件配置正确，但某些文件或目录依然被 `Git` 跟踪并上传到远程仓库，这通常是因为这些文件在添加到 `.gitignore` **之前**已经被 `Git` 跟踪并提交过。即使后来在 `.gitignore` 中添加了这些文件的忽略规则， `Git` 依然会继续跟踪它们。
 
 ***那么如何使 `.gitignore` 文件的规则对于那些已经被 track 的文件生效呢 ?***
 
-## 解决办法
+### 解决办法
 
 要解决 `.gitignore` 失效的问题，需要通过以下步骤将已经被 Git 跟踪的文件从版本控制中移除，并确保这些文件在将来不会被再次跟踪。具体操作如下：
 
-### 更新 `.gitignore` 文件
+#### 更新 `.gitignore` 文件
 
 编辑 `.gitignore` 文件，并确保将需要忽略的文件或目录添加到其中。例如，忽略某个目录或文件：
 
@@ -81,7 +84,7 @@ folder_name/
 file_name.txt
 ```
 
-### 从 Git 索引中移除文件
+#### 从 Git 索引中移除文件
 
 对于已经上传到 Git 仓库的文件，你需要将这些文件从 Git 的索引中移除，但保留它们在本地。使用以下命令：
 
@@ -96,7 +99,7 @@ git rm --cached -r *
 git rm -r --cached folder_name/
 ```
 
-### 提交更改
+#### 提交更改
 
 完成文件移除操作后，提交 `.gitignore` 的更改和文件从 Git 索引中移除的更改：
 
@@ -105,7 +108,7 @@ git add .gitignore
 git commit -m "Update .gitignore and remove files from tracking"
 ```
 
-### 推送更改
+#### 推送更改
 
 最后，将提交推送到远程仓库：
 
@@ -115,9 +118,9 @@ git push origin branch_name
 
 完成以上步骤后，Git 将不再跟踪 `.gitignore` 中列出的文件或目录，且这些文件不会再上传到远程仓库。
 
-# 提交和同步
+## 提交和同步
 
-## 首次提交
+### 首次提交
 
 欲把本地项目发布到 Github 仓库中，需要以下步骤：
 
@@ -133,7 +136,7 @@ git remote add origin https://github.com/<username>/<repo-name>.git       <-- �
 git push -u origin main           <-- 推动提交记录到远程仓库
 ```
 
-## 版本更新
+### 版本更新
 
 非首次提交就无需像上述那样麻烦了，只需要进行「提交和同步」即可，具体操作如下：
 
@@ -147,7 +150,7 @@ git push origin main <– 推送提交记录到远程仓库
 
 由于我们需要多次使用，每次输入上述命令十分繁琐，为了加快工作效率，我们可以自定义 `git` 命令。
 
-## 设置命令别名
+### 设置命令别名
 
 - 语法
 
@@ -180,7 +183,7 @@ git pu
 
 不难发现，「提交和同步」变得十分简洁！
 
-## 删除未同步的提交
+### 删除未同步的提交
 
 要删除尚未推送的提交，你可以使用 Git 的 `git reset` 命令。这个命令允许你回退到某个特定的提交，并且会在本地修改提交历史。根据你想要保留的更改类型（是否保留工作区的修改），有不同的选项。
 
@@ -230,7 +233,7 @@ git push --force
 
 **警告：** 强制推送会覆盖远程仓库的历史，可能会影响其他开发者的工作，所以要谨慎使用。
 
-### 总结
+#### 总结
 
 - 使用 `git reset --soft HEAD~1` 来删除最近的提交并保留修改。
 - 使用 `git reset --hard HEAD~1` 来删除最近的提交并丢弃修改。
@@ -238,7 +241,7 @@ git push --force
 - 使用 `git reset --hard HEAD~n` 来删除最近的多次提交并丢弃修改。
 - 使用 `git push --force` 来强制将修改推送到远程仓库。
 
-# Git-Commit 的规范编写
+## Git-Commit 的规范编写
 
 **我们为什么要规范 commit？**
 
@@ -248,19 +251,19 @@ git push --force
 
 基于以上这些问题，本文希望通过某种方式来监控用户的 `git commit message`，让规范更好的服务于质量，提高大家的研发效率。
 
-## 规范建设
+### 规范建设
 
 一开始，我希望借助前人已经约定好的规范进行本文的内容基础，但在寻找了大量关于 `git commit -m [message]` 的资料后，学习、结合了 [Alibaba · 阿里巴巴](https://github.com/alibaba)、[高德地图](https://lbs.amap.com/)等相关部门已有的规范总结出以下规范。
 
-### Commit message 格式
+#### Commit message 格式
 
 ```bash
 <type>(<scope>):<subject>
 ```
 
-## 字段含义
+### 字段含义
 
-### type
+#### type
 
 > [!important] **必写项**
 > type 是 commit message 必须包含的内容，用于说明 git commit 的类别，只允许使用下面的标识。
@@ -279,14 +282,14 @@ git push --force
 - `merge` ：代码合并。
 - `sync` ：同步主线或分支的 Bug。
 
-### scope
+#### scope
 
 >[!important] 可选项
 >scope 用于说明 commit 影响的范围，比如数据层、控制层、视图层等等，视项目不同而不同。
 
 - 例如在 `Angular` ，可以是 `location` ， `browser` ， `compile` ， `rootScope` ， `ngHref` ， `ngClick` ， `ngView` 等。如果你的修改影响了不止一个 scope，你可以使用  号代替。
 
-### subject
+#### subject
 
 > [!important] 可选项
 > subject 是 commit 目的的简短描述，不超过 50 个字符。
@@ -294,7 +297,7 @@ git push --force
 - 建议使用中文（感觉中国人用中文描述问题能更清楚一些）。
 - 结尾不加句号或其他标点符号。
 
-## 总结
+### 总结
 
 根据以上规范 `git commit message` 将是如下的格式：
 
