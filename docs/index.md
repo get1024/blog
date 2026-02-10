@@ -3,9 +3,7 @@ title: 文章索引页
 createAt: 2024-04-29 21:50:23
 updateAt: 2025-02-02 23:43:34
 tags:
-  - Index
-  - Info
-  - 博客
+  - index
 ---
 
 # 文章索引页
