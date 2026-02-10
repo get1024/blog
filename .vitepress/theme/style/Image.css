@@ -1,0 +1,50 @@
+/* 全局图片样式 */
+img:not(.linkcard-img):not(.VPImage.image-src):not(.VPImage.logo):not(.titleAvatar):not(.h-8):not(.avatar-img):not(.badgeP>img) {
+    border-radius: 4px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+/* 全局视频样式 */
+video {
+    width: 100%;
+    border-radius: 4px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* 首页图片 */
+/* img.VPImage.image-src */
+
+/* 导航栏-左上角图标 */
+/* img.VPImage.logo */
+
+/* 分类首页头像图标 */
+img.titleAvatar {
+    width: 35px;
+    float: left;
+    margin: -2px 5px 0 0;
+    border-radius: 50%;
+}
+
+/* 贡献者头像图标 */
+/* img.h-8 */
+
+
+/* 关于我-徽标 */
+/* .badgeP>img */
+
+/* 图片缩放样式 */
+.medium-zoom-overlay {
+    /* 设置图片缩放时的覆盖层z-index */
+    z-index: 30;
+}
+
+.medium-zoom-image {
+    /* 设置图片缩放时的图片z-index，确保图片在最上层 */
+    z-index: 9999 !important;
+}

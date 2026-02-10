@@ -1,0 +1,30 @@
+/* 主页自定义集 */
+
+/* 主页修饰 */
+:root {
+  /* 文档底部上下页间距 */
+  .pager .desc {
+    padding-bottom: 8px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--main-page-text);
+  }
+}
+
+/* h1标题颜色 */
+h1 {
+  color: var(--main-page-text);
+}
+
+/* 脚注 */
+.footnotes p{
+  font-size: 13px;
+  font-weight: bold;
+  margin: 2px 0;
+  font-family: monospace;
+  color: var(--main-page-text);
+}
+
+.footnotes-list li+li{
+  margin-top: 0px;
+}

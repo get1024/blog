@@ -1,0 +1,6 @@
+
+/* 标题栏样式 */
+.vp-code-block-title .vp-code-block-title-bar {
+    color: var(--vp-c-text-1);
+    font-weight: bold;
+}

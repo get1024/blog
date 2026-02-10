@@ -1,0 +1,103 @@
+:root {
+    --custom-backtop-ring: var(--main-page-bg);
+
+    --vp-c-brand-1: #8A5CF5;
+    --vp-c-brand-2: #a984ff;
+    --vp-c-brand-3: #aa86ff;
+
+    /* linkcard色卡 */
+    --custom-bg: #f0f0f0;
+    --custom-border: #dedede;
+    --custom-text: #575d65;
+
+    /* 首页按钮 */
+    --vp-button-brand-text: #F6CEEC;
+    --vp-button-brand-bg: #D939CD;
+    --vp-button-brand-hover-text: #fff;
+    --vp-button-brand-hover-bg: #fe64f1;
+
+    /* 自定义阴影 */
+    --custom-shadow:0 10px 30px 0 rgb(0 0 0 / 40%);
+
+    /* 自定义容器 */
+    --custom-block-info-left: #cccccc;
+    --custom-block-info-bg: #fafafa;
+
+    --custom-block-tip-left: #009400;
+    --custom-block-tip-bg: #e6f6e6;
+
+    --custom-block-warning-left: #e6a700;
+    --custom-block-warning-bg: #fff8e6;
+
+    --custom-block-danger-left: #e13238;
+    --custom-block-danger-bg: #ffebec;
+
+    --custom-block-note-left: #4cb3d4;
+    --custom-block-note-bg: #eef9fd;
+
+    --custom-block-important-left: #a371f7;
+    --custom-block-important-bg: #f4eefe;
+
+    --custom-block-caution-left: #e0575b;
+    --custom-block-caution-bg: #fde4e8;
+
+    /* 主页色卡 */
+    --main-page-bg: white;
+    --main-page-text: #3C3C43;
+    --main-page-from: #222222;
+    --main-page-to: #585858;
+    --main-page-menu: #525861;
+    --main-page-appearance: #e0e0e0;
+
+    --custom-toast-bg: #00000020;
+    --custom-toast-text: #000000;
+}
+
+.dark {
+    --custom-backtop-ring: var(--main-page-bg);
+    
+    --vp-c-brand-1: #9b70ff;
+    --vp-c-brand-2: #a984ff;
+    --vp-c-brand-3: #aa86ff;
+
+    /* linkcard色卡 */
+    --custom-bg: #1f1f1f;
+    --custom-border: #282828;
+    --custom-text: #969ba6;
+
+    /* 自定义阴影 */
+    --custom-shadow:0 10px 30px 0 rgb(255 255 255 / 40%);
+
+    /* 自定义容器 */
+    --custom-block-info-left: #cccccc;
+    --custom-block-info-bg: #474748;
+
+    --custom-block-tip-left: #009400;
+    --custom-block-tip-bg: #003100;
+
+    --custom-block-warning-left: #e6a700;
+    --custom-block-warning-bg: #4d3800;
+
+    --custom-block-danger-left: #e13238;
+    --custom-block-danger-bg: #4b1113;
+
+    --custom-block-note-left: #4cb3d4;
+    --custom-block-note-bg: #193c47;
+
+    --custom-block-important-left: #a371f7;
+    --custom-block-important-bg: #230555;
+
+    --custom-block-caution-left: #e0575b;
+    --custom-block-caution-bg: #391c22;
+
+    /* 主页色卡 */
+    --main-page-bg: #050505;
+    --main-page-text: #DFDFD6;
+    --main-page-from: #f0f0f0;
+    --main-page-to: #575757;
+    --main-page-menu: #969ba6;
+    --main-page-appearance: #222222;
+
+    --custom-toast-bg: #ffffff20;
+    --custom-toast-text: #ffffff;
+}
