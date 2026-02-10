@@ -2,12 +2,13 @@
 import { ref, computed, onMounted } from 'vue'
 import PostList from './PostList.vue'
 import { data as tags } from './tags.data.ts'
+import { Post } from './dateUtils'
 
 // 当前选中的标签
 const selectedTag = ref('')
 
 // 获取选中标签的文章列表
-const selectedPosts = computed(() => {
+const selectedPosts = computed<Post[]>(() => {
     if (!selectedTag.value) return []
     return tags.find(t => t.name === selectedTag.value)?.posts || []
 })
@@ -105,5 +106,4 @@ onMounted(() => {
     opacity: 0.8;
     font-size: 0.9em;
 }
-
-</style> 
+</style>

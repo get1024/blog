@@ -22,7 +22,7 @@ export interface Post {
 }
 
 // 日期处理函数：将日期字符串转换为结构化对象
-export function splitDate(dateStr: string): DateComponents {
+export function splitDate(dateStr: string | Date): DateComponents {
     const date = new Date(dateStr);
     return {
         year: date.getUTCFullYear(),
@@ -47,15 +47,21 @@ export function processPost(post: ContentData): Post {
     };
 }
 
-// 按日期排序的函数
+// 获取日期的时间戳数值
+export function getDateValue(d: DateComponents): number {
+    return new Date(
+        `${d.year}-${d.month}-${d.day}T${d.hour}:${d.minute}:${d.second}Z`
+    ).getTime();
+}
+
+// 格式化日期显示
+export function formatDate(d: DateComponents): string {
+    return `${d.year}.${d.month}.${d.day} ${d.hour}:${d.minute}:${d.second}`;
+}
+
+// 按日期排序的函数 (降序)
 export function sortPostsByDate(posts: Post[]): Post[] {
     return posts.sort((a, b) => {
-        const dateA = new Date(
-            `${a.frontmatter.createAt.year}-${a.frontmatter.createAt.month}-${a.frontmatter.createAt.day}`
-        );
-        const dateB = new Date(
-            `${b.frontmatter.createAt.year}-${b.frontmatter.createAt.month}-${b.frontmatter.createAt.day}`
-        );
-        return dateB.getTime() - dateA.getTime();
+        return getDateValue(b.frontmatter.createAt) - getDateValue(a.frontmatter.createAt);
     });
-} 
+}

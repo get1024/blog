@@ -1,60 +1,14 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { data as tagsData } from './tags.data'
+import { formatDate, Post } from './dateUtils'
 
-interface Post {
-    url: string
-    frontmatter: {
-        title: string
-        tags?: string[]
-        createAt: {
-            year: number
-            month: string
-            day: string
-            hour: string
-            minute: string
-            second: string
-        }
-        updateAt: {
-            year: number
-            month: string
-            day: string
-            hour: string
-            minute: string
-            second: string
-        }
-    }
-}
-
-const props = defineProps<{
+defineProps<{
     posts: Post[]
 }>()
-
-// 使用 tags.data.ts 中处理过的标签数据
-const processedPosts = computed(() => {
-    return props.posts.map(post => {
-        // 在 tagsData 中查找当前文档的标签
-        const postTags = tagsData.reduce((acc: string[], tagItem) => {
-            if (tagItem.posts.some(p => p.url === post.url)) {
-                acc.push(tagItem.name)
-            }
-            return acc
-        }, [])
-
-        return {
-            ...post,
-            frontmatter: {
-                ...post.frontmatter,
-                tags: postTags
-            }
-        }
-    })
-})
 </script>
 
 <template>
     <ul class="post-list-ul">
-        <a class="post-link" v-for="post of processedPosts" :key="post.url" :href="post.url">
+        <a class="post-link" v-for="post of posts" :key="post.url" :href="post.url">
             <li class="post-item">
                 <div class="post-content">
                     <div class="post-title-container">
@@ -72,14 +26,10 @@ const processedPosts = computed(() => {
                     </div>
                     <div class="post-dates">
                         <span class="post-update">
-                            更新于 {{ post.frontmatter.updateAt.year }}.{{ post.frontmatter.updateAt.month }}.{{
-                                post.frontmatter.updateAt.day }} {{ post.frontmatter.updateAt.hour }}:{{
-                                post.frontmatter.updateAt.minute }}:{{ post.frontmatter.updateAt.second }}
+                            更新于 {{ formatDate(post.frontmatter.updateAt) }}
                         </span>
                         <span class="post-date">
-                            创建于 {{ post.frontmatter.createAt.year }}.{{ post.frontmatter.createAt.month }}.{{
-                                post.frontmatter.createAt.day }} {{ post.frontmatter.createAt.hour }}:{{
-                                post.frontmatter.createAt.minute }}:{{ post.frontmatter.createAt.second }}
+                            创建于 {{ formatDate(post.frontmatter.createAt) }}
                         </span>
                     </div>
                 </div>

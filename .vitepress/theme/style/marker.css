@@ -4,14 +4,6 @@
     font-style:italic;
 }
 
-.marker-underline {
-    text-decoration: underline;
-    text-decoration-thickness: 9px;
-    text-decoration-color: rgba(255, 40, 130, 0.4);
-    text-underline-offset: -4px;
-    text-decoration-skip-ink: none;
-}
-
 /* 尤雨溪样式 */
 .marker-evy {
     white-space: nowrap;

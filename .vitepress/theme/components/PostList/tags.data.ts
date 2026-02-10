@@ -1,12 +1,11 @@
 import { ContentData, createContentLoader } from "vitepress";
-import { processPost, sortPostsByDate } from "./dateUtils";
-import type { Post as BlogPost } from "./dateUtils";
+import { processPost, sortPostsByDate, Post } from "./dateUtils";
 
 // 标签接口定义
-interface Tag {
+export interface Tag {
     name: string;
     count: number;
-    posts: BlogPost[];
+    posts: Post[];
     size: number;
 }
 
@@ -38,7 +37,7 @@ export { data };
 export default createContentLoader("**/*.md", {
     transform(raw: ContentData[]) {
         // 创建标签映射表
-        const tagMap = new Map<string, { count: number; posts: BlogPost[] }>();
+        const tagMap = new Map<string, { count: number; posts: Post[] }>();
 
         // 处理所有文章并统计标签信息
         raw.forEach((rawPost) => {

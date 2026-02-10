@@ -72,7 +72,7 @@ export default defineConfig({
     plugins: [
       // Git changelog 插件
       GitChangelog({
-        repoURL: () => "https://github.com/get1024/get1024.github.io",
+        repoURL: () => "https://github.com/get1024/blog",
         mapAuthors: [
           {
             name: "RyanJoy",
@@ -163,13 +163,13 @@ export default defineConfig({
     nav,
 
     editLink: {
-      pattern: "https://github.com/get1024/get1024.github.io/edit/main/:path",
+      pattern: "https://github.com/get1024/blog/edit/main/:path",
       text: "在 GitHub 上编辑此页面",
     },
 
     footer: {
       message: "见贤思齐",
-      copyright: `Copyright © 2022.10~${new Date().getFullYear()}\.${String(new Date().getMonth() + 1).padStart(2, '0')}\.${new Date().getDate()}&nbsp;&nbsp;<a href="https://github.com/get1024">👨🏼‍💻RyanJoy</a>`,
+      copyright: `Copyright © 2022.10~${new Date().getFullYear()}\.${String(new Date().getMonth() + 1).padStart(2, '0')}\.${new Date().getDate()}&nbsp;&nbsp;<a href="https://github.com/get1024">RyanJoy</a>`,
     },
 
     docFooter: {
@@ -178,7 +178,7 @@ export default defineConfig({
     },
 
     outline: {
-      label: "📑本页大纲",
+      label: "本页大纲",
       level: "deep",
     },
 
@@ -200,7 +200,7 @@ export default defineConfig({
     socialLinks: [
       {
         icon: "github",
-        link: "https://github.com/get1024/get1024.github.io",
+        link: "https://github.com/get1024/blog",
       },
     ],
 

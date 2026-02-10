@@ -1,5 +1,5 @@
 import { createContentLoader } from "vitepress";
-import { processPost, Post } from "./dateUtils";
+import { processPost, sortPostsByDate, Post } from "./dateUtils";
 
 // Helper function to group posts by year
 function groupByYear(posts: Post[]) {
@@ -15,8 +15,11 @@ function groupByYear(posts: Post[]) {
 
 export default createContentLoader("docs/**/*.md", {
     transform(rawPosts) {
-        // Process posts and group by year
+        // Process posts
         const processedPosts = rawPosts.map(processPost);
-        return groupByYear(processedPosts);
+        // Sort by date (descending) before grouping
+        const sortedPosts = sortPostsByDate(processedPosts);
+        // Group by year
+        return groupByYear(sortedPosts);
     },
 });
