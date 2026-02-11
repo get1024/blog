@@ -1,7 +1,7 @@
 ---
 title: 博客美化：Vitepress自动生成索引页
 createAt: 2025-10-28 07:43:21
-updateAt: 2026-02-11 06:08:10
+updateAt: 2026-02-11 23:10:39
 tags:
   - 博客
   - 博客美化
@@ -32,25 +32,19 @@ tags:
 我的文档结构如下。
 
 ```shell [powershell]
-get1024.github.io
+blog
 |-- otherDocs
-|   |-- 联系我.md
-|   |-- index.md
+|   |-- tagCloud.md
+|   |-- draft.md
 |   |-- ...
 |-- docs
-|   |-- 🏙️生活技巧/...
-|   |-- 👨🏼‍💻个人项目/...
-|   |-- 💻操作系统/...
-|   |-- 🖥️专业技能/...
-|   |-- 🤔反思和总结/...
-|   |-- 🛠️实用工具/...
+|   |-- Vitepress博客/...
+|   |-- ...
 |   |-- index.md
 |-- node_modules/...
 |-- public/...
 |-- index.md
 ```
-
-易见我的项目结构没有 `'/docs/'` 存在，不过不必慌张，这一因素造成的区别也只会体现在 `Vitepress` 配置文件 `config.ts` 中的 [`base:`](https://vitepress.dev/zh/reference/site-config#base) 选项。我相信你在最初构建项目时，就已经完成了对它的配置。
 
 我需要展示在 索引列表 的笔记只是 `'docs/'` 目录下的。至于 `'/otherDocs/'` 和 `'/index.md'` 都是通过 `config.mts` 文件中的 [`nav` 配置](https://vitepress.dev/zh/reference/default-theme-config#nav) 指向的。
 
@@ -77,7 +71,7 @@ tags：
 
 `createAt` 是文章创建的时间， `updateAt` 是文章最近一次编辑的时间。二者的格式均为 `YYYY-MM-DD HH:mm:ss` 。
 
-对于每篇文档中的这三个字段，您可以手动输入配置，或通过一些插件进行实现。由于笔者是基于 [Obsidian](https://obsidian.md/) 进行文档编写，我采用了 [插件](博客搭建：个人博客搭建、使用最佳解决方案.md#文件配置) 实现文档格式化，自动添加以上三个属性。如果读者有更好的实现方案，请访问 [本仓库](https://github.com/get1024/get1024.github.io) `fork` 并提出 `PR` 。
+对于每篇文档中的这三个字段，您可以手动输入配置，或通过一些插件进行实现。由于笔者是基于 [Obsidian](https://obsidian.md/) 进行文档编写，我采用了 [插件](博客搭建：个人博客搭建、使用最佳解决方案.md#文件配置) 实现文档格式化，自动添加以上三个属性。如果读者有更好的实现方案，请访问 [本仓库](https://github.com/get1024/blog) `fork` 并提出 `PR` 。
 
 对于上述配置如果您还有自己的需求，当然可以进行更多的键值对 `[属性名]: [属性值]` 配置。
 
@@ -229,8 +223,6 @@ tags:
 ## <p><img src="/avatar.png" class="titleAvatar" /><span>RyanJoy 的博客</span></p>
 
 👏欢迎来到我的博客 [RyanJoy's Blog](https://blog.ryanjoy.top/)，这里是「📒文章索引页」分区！
-
-<span class="marker-underline">***左侧*** 是</span><span class="marker-fakeTitle">📒文章分类</span><span class="marker-underline">，***下方*** 是</span><span class="marker-fakeTitle">📒文章更新时间树</span><span class="marker-underline">。选择一种方式进行 `浏览` 寻找你感兴趣的文章，或者 `ctrl+k` 搜索你需要的文章查阅吧！</span>
 
 <nodeIndex />
 ```
