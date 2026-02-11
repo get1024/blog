@@ -9,24 +9,27 @@ tags:
 
 # 博客插件：Vitepress自动生成侧边栏
 
-|  Github仓库：[@ryanjoy/vitepress-plugin-sidebar](https://github.com/get1024/customIntegrations/tree/main/vitepress-plugin-sidebar)  |  npm地址：[@ryanjoy/vitepress-plugin-sidebar](https://www.npmjs.com/package/@ryanjoy/vitepress-plugin-sidebar)  |
-| :-: | :-: |
+npm地址：[@ryanjoy/vitepress-plugin-sidebar](https://www.npmjs.com/package/@ryanjoy/vitepress-plugin-sidebar)
+
+> 后续应该会在进行维护此插件，最近一段时间没有维护的想法……
 
 ## 安装
 
 通过运行以下命令将 `@ryanjoy/vitepress-plugin-sidebar` 安装到您的项目依赖项中：
 
-```shell
+::: code-group
+```shell [pnpm]
 pnpm add @ryanjoy/vitepress-plugin-sidebar -D
 ```
 
-```shell
+```shell [npm]
 npm i @ryanjoy/vitepress-plugin-sidebar -D
 ```
 
-```shell
+```shell [yarn]
 yarn add @ryanjoy/vitepress-plugin-sidebar -D
 ```
+:::
 
 ## 使用
 
