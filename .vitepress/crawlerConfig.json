@@ -1,6 +1,6 @@
 {
   "index_name": "get1024io",
-  "start_urls": ["https://get1024.github.io/RyanJoy-s_Web/"],
+  "start_urls": ["https://blog/RyanJoy-s_Web/"],
   "rateLimit": 8,
   "maxDepth": 10,
   "selectors": {

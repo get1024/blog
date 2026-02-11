@@ -106,7 +106,7 @@ fatherFolder
 
 ## 🤝 贡献指南
 
-1. `Fork` [本仓库](https://github.com/get1024/get1024.github.io)
+1. `Fork` [本仓库](https://github.com/get1024/blog)
 2. 创建您的特性分支 ( `git checkout -b [name]` )
 3. 提交您的更改 ( `git commit -m '[message]'` )
 4. 推送到分支 ( `git push origin [name]` )
