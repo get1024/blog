@@ -1,6 +1,6 @@
 ---
 layout: home
-title: 🏡首页
+title: 首页
 head:
   - - meta
     - name: keywords

@@ -11,24 +11,24 @@ defineProps<{
         <a class="post-link" v-for="post of posts" :key="post.url" :href="post.url">
             <li class="post-item">
                 <div class="post-content">
-                    <div class="post-title-container">
+                    <div class="post-header">
                         <span class="post-title">{{ post.frontmatter.title }}</span>
-                        <span class="post-tags" v-if="post.frontmatter.tags?.length">
-                            <span class="tag-label">标签:</span>
+                        <div class="post-tags" v-if="post.frontmatter.tags?.length">
                             <span
                                 v-for="(tag, index) in post.frontmatter.tags"
                                 :key="tag"
                                 class="tag-item"
                             >
-                                {{ tag }}{{ index < post.frontmatter.tags.length - 1 ? ', ' : '' }}
+                                {{ tag }}
                             </span>
-                        </span>
+                        </div>
                     </div>
-                    <div class="post-dates">
-                        <span class="post-update">
+                    <div class="post-meta">
+                        <span class="meta-item">
                             更新于 {{ formatDate(post.frontmatter.updateAt) }}
                         </span>
-                        <span class="post-date">
+                        <span class="meta-separator">·</span>
+                        <span class="meta-item">
                             创建于 {{ formatDate(post.frontmatter.createAt) }}
                         </span>
                     </div>
@@ -43,109 +43,122 @@ defineProps<{
     list-style: none;
     padding: 0;
     margin: 0;
-}   
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
 
 .post-link {
     text-decoration: none;
     display: block;
+    color: inherit;
 }
 
-.post-link:hover .post-title {
-    text-decoration: underline;
-}
-
+/* macOS / Notion Card Style */
 .post-item {
-    margin: 8px 0;
-    padding: 1rem;
-    transition: transform 0.16s ease, box-shadow 0s ease;
-    border: 2px solid var(--custom-border);
-    border-radius: 0.5rem;
-    background-color: transparent;
+    padding: 16px 20px;
+    border: 1px solid var(--vp-c-divider);
+    border-radius: 12px;
+    background-color: var(--vp-c-bg-soft);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    position: relative;
+    overflow: hidden;
 }
 
 .post-item:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--custom-shadow);
+    background-color: var(--vp-c-bg-alt);
+    border-color: var(--vp-c-brand-1);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.1);
 }
 
+/* Flex Column Layout */
 .post-content {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 10px;
 }
 
-.post-title-container {
-    flex: 1;
+.post-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem;
+    align-items: flex-start;
+    gap: 12px;
 }
 
 .post-title {
-    font-weight: bolder;
-    text-decoration: none;
-    word-break: break-word;
-    flex-shrink: 0;
-    font-size: 0.95em;
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--vp-c-text-1);
+    transition: color 0.2s ease;
 }
 
+.post-link:hover .post-title {
+    color: var(--vp-c-brand-1);
+}
+
+/* Tag Pills */
 .post-tags {
-    color: gray;
-    font-weight: bolder;
-    font-size: 0.72em;
-    font-weight: bolder;
-}
-
-.tag-label {
-    color: var(--custom-text);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    flex-shrink: 0;
 }
 
 .tag-item {
-    color: var(--vp-c-brand-1);
-    margin: 0 2px;
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background-color: var(--vp-c-bg-mute);
+    color: var(--vp-c-text-2);
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
 }
 
-.post-dates {
+.post-item:hover .tag-item {
+    background-color: var(--vp-c-bg);
+    border-color: var(--vp-c-divider);
+}
+
+/* Metadata */
+.post-meta {
     display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--vp-c-text-3);
+    font-family: var(--vp-font-family-mono);
 }
 
-.post-update,
-.post-date {
-    color: var(--custom-text);
-    font-weight: bolder;
-    font-size: 0.72em;
+.meta-separator {
+    opacity: 0.5;
 }
 
-/* 移动端适配 */
-@media (max-width: 768px) {
-    .post-content {
-        gap: 0.8rem;
-    }
-
-    .post-title-container {
+/* Mobile Responsiveness */
+@media (max-width: 640px) {
+    .post-header {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 0.4rem;
+        gap: 8px;
     }
-
-    .post-dates {
-        flex-direction: column;
-        gap: 0.3rem;
+    
+    .post-tags {
+        width: 100%;
     }
-
-    .post-update,
-    .post-date {
-        white-space: normal;
-        min-width: unset;
+    
+    .post-meta {
+        flex-wrap: wrap;
+        gap: 6px;
+        font-size: 0.8rem;
     }
-
-    .post-item {
-        padding: 0.8rem;
+    
+    .meta-separator {
+        display: none;
+    }
+    
+    .meta-item {
+        display: block;
+        width: 100%;
     }
 }
 </style>

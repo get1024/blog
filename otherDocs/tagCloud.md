@@ -9,10 +9,4 @@ sidebar: true
 
 # 文档标签
 
-::: tip
-
-包含了本文档库中所有的 `markdown` 文件……
-
-:::
-
 <TagCloud /> 

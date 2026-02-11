@@ -1,9 +1,9 @@
 ---
 title: Git和Github的最佳实践
-createAt: 2024-04-29 21:50:23
-updateAt: 2025-02-02 23:43:34
-tags: 
-    - git
+createAt: 2022-02-04 03:53:08
+updateAt: 2026-02-11 04:13:59
+tags:
+  - git
 ---
 
 # Git和Github的最佳实践
@@ -265,7 +265,7 @@ git push --force
 
 #### type
 
-> [!important] **必写项**
+> [!important] 必写项
 > type 是 commit message 必须包含的内容，用于说明 git commit 的类别，只允许使用下面的标识。
 
 - `feat` ：新功能（feature）。

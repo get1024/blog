@@ -10,6 +10,6 @@ tags:
 
 ## <p><img src="/avatar.png" class="titleAvatar" /><span>RyanJoy 的博客</span></p>
 
-👏欢迎来到我的博客 [RyanJoy's Blog](https://blog.ryanjoy.top/)，这里是「docs索引页」分区！
+欢迎来到我的博客 [RyanJoy's Blog](https://blog.ryanjoy.top/)，这里是「docs索引页」分区！
 
 <nodeIndex />

@@ -48,10 +48,15 @@ onMounted(() => {
     </div>
 
     <!-- 文章列表部分 -->
-    <div v-if="selectedTag && selectedPosts.length" class="posts-list">
-      <h4>{{ selectedTag }} 相关文章 —— {{ selectedPosts.length }} 篇</h4>
-      <PostList :posts="selectedPosts" />
-    </div>
+    <transition name="fade">
+      <div v-if="selectedTag && selectedPosts.length" class="posts-list">
+        <h3 class="tag-list-title">
+          <span class="highlight">{{ selectedTag }}</span> 
+          <span class="meta-info">相关文章 · {{ selectedPosts.length }} 篇</span>
+        </h3>
+        <PostList :posts="selectedPosts" />
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -60,14 +65,15 @@ onMounted(() => {
 .tag-section {
     display: flex;
     flex-direction: column;
+    gap: 24px;
 }
 
 .tag-cloud {
     background-color: var(--vp-c-bg-soft);
     border-radius: 12px;
-    padding: 20px;
-    margin: 1rem 0;
+    padding: 24px;
     box-shadow: var(--custom-shadow);
+    border: 1px solid var(--vp-c-divider);
 }
 
 .tags-container {
@@ -75,35 +81,83 @@ onMounted(() => {
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
+    gap: 12px; /* Add explicit gap */
 }
 
 /* 单个标签样式 */
 .tag-item {
-    display: inline-block;
-    padding: 0.3rem 0.6rem;
-    border-radius: 1rem;
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 20px;
     cursor: pointer;
-    transition: all 0.16s ease;
-    color: var(--main-page-text);
-    background: transparent;
+    transition: all 0.2s ease;
+    color: var(--vp-c-text-2);
+    background-color: var(--vp-c-bg-mute);
+    border: 1px solid transparent;
+    line-height: 1.2;
 }
 
 .tag-item:hover {
     color: var(--vp-c-brand-1);
+    background-color: var(--vp-c-bg);
+    border-color: var(--vp-c-brand-1);
     transform: translateY(-2px);
-    background-color: var(--main-page-bg);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
 /* 激活状态样式 */
 .tag-item.active {
-    color: var(--vp-c-brand-1);
-    font-weight: bold;
+    background-color: var(--vp-c-brand-1);
+    color: white;
+    box-shadow: 0 4px 10px rgba(var(--vp-c-brand-1), 0.3);
 }
 
-
 .tag-count {
-    margin-left: 2px;
-    opacity: 0.8;
-    font-size: 0.9em;
+    margin-left: 6px;
+    opacity: 0.7;
+    font-size: 0.85em;
+    font-weight: normal;
+}
+
+.tag-item.active .tag-count {
+    color: rgba(255,255,255,0.8);
+}
+
+/* 列表部分样式 */
+.posts-list {
+    margin-top: 1rem;
+}
+
+.tag-list-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--vp-c-divider);
+}
+
+.tag-list-title .highlight {
+    color: var(--vp-c-brand-1);
+}
+
+.tag-list-title .meta-info {
+    font-size: 1rem;
+    font-weight: normal;
+    color: var(--vp-c-text-3);
+}
+
+/* 动画 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
