@@ -1,0 +1,67 @@
+/* .vitepress/theme/style/vp-code-group.css */
+
+/* 代码组：tab间距 */
+.vp-code-group .tabs {
+  padding: 0 16px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--vp-code-block-divider-color);
+  background-color: var(--vp-code-block-bg);
+  margin-bottom: 0;
+}
+
+/* 覆盖默认的 label 样式以确保垂直居中 */
+.vp-code-group .tabs label {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0 12px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.25s, color 0.25s;
+  /* 移除可能存在的默认样式干扰 */
+  box-shadow: none;
+  background: transparent;
+}
+
+.vp-code-group .tabs label::after {
+  display: none;
+}
+
+.vp-code-group .tabs input:checked + label {
+  border-bottom-color: var(--vp-c-brand-1);
+  color: var(--vp-c-brand-1);
+}
+
+/* 代码组：添加样式及阴影 */
+.vp-code-group {
+  color: var(--vp-c-black-soft);
+  border-radius: 8px;
+  box-shadow: 0 10px 15px 0 rgba(0, 0, 0, 0.2); /* 添加阴影 */
+}
+
+/* 代码组：修正倒角、阴影、边距 */
+.vp-code-group div[class*="language-"] {
+  border-radius: 8px;
+  box-shadow: none;
+  padding-top: 0px;
+}
+
+/* 代码组：隐藏小圆点 */
+.vp-code-group div[class*="language-"]::before {
+  display: none;
+}
+
+/* 代码组（无行号）：修正倒角、阴影、边距 */
+.vp-code-group div[class*="language-"].vp-adaptive-theme {
+  border-radius: 8px;
+  box-shadow: none;
+  padding-top: 0px;
+}
+
+/* 代码组（无行号）：隐藏小圆点 */
+.vp-code-group div[class*="language-"].vp-adaptive-theme::before {
+  display: none;
+}

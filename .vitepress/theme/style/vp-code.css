@@ -1,0 +1,10 @@
+/* .vitepress/theme/style/vp-code.css */
+
+/* 代码块：增加阴影 */
+.vp-doc div[class*=language-] {
+  box-shadow: 0 10px 15px 0 rgba(0, 0, 0, 0.2); /* 添加阴影 */
+}
+
+.vp-doc div[class*='language-'].line-numbers-mode {
+  margin-bottom: 20px;
+}

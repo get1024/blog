@@ -1,0 +1,49 @@
+/* .vitepress/theme/style/vp-code-title.css */
+
+/* 整体容器样式（带阴影和圆角） */
+.vp-code-block-title {
+  background-color: var(--vp-code-block-bg);
+  margin-bottom: 20px;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px 0 rgba(0, 0, 0, 0.2); /* 添加阴影 */
+  overflow: hidden;
+  position: relative; /* 确保小圆点定位 */
+}
+
+/* 标题栏样式 */
+.vp-code-block-title .vp-code-block-title-bar {
+  margin: 0;
+  padding: 0 16px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--vp-code-block-divider-color);
+  background-color: var(--vp-code-block-bg);
+  color: var(--vp-c-text-2);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* 代码块标题：修正倒角、阴影、边距 */
+.vp-code-block-title div[class*="language-"].vp-adaptive-theme.line-numbers-mode {
+  border-radius: 8px;
+  box-shadow: none;
+  padding-top: 0px;
+  margin-bottom: 0px;
+}
+
+/* 代码块标题：隐藏小圆点 */
+.vp-code-block-title div[class*="language-"].vp-adaptive-theme.line-numbers-mode::before {
+  display: none;
+}
+
+/* 代码块标题（无行号）：修正倒角、阴影、边距 */
+.vp-code-block-title div[class*="language-"].vp-adaptive-theme {
+  border-radius: 8px;
+  box-shadow: none;
+  padding-top: 0px;
+}
+/* 代码块标题（无行号）：隐藏小圆点 */
+.vp-code-block-title div[class*="language-"].vp-adaptive-theme::before {
+  display: none;
+}
