@@ -494,7 +494,7 @@ export const Theme: ThemeConfig = {
 
 ## 组件使用
 
-在需要出现 `标签索引` 的文档输入 `<TagCloud />` ，我的 [标签索引页](../../../../otherDocs/tagCloud.md) 源代码如下
+在需要出现 `标签索引` 的文档输入 `<TagCloud />` ，我的 [标签索引页](../../otherDocs/tagCloud.md) 源代码如下
 
 ```md [tagCloud.md]
 ---

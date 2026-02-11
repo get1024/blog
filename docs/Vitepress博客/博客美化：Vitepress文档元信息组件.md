@@ -200,7 +200,7 @@ const handleTagClick = (tag: string) => {
 </style>
 ```
 
-<span style="background-color:#F43F5E50;color:red">红色高亮</span> 代码中的 `/otherDocs/tagCloud.html` 是我的 [标签索引页](../../../../otherDocs/tagCloud.md) 的路径，这里你需要根据你的项目结构进行配置。
+<span style="background-color:#F43F5E50;color:red">红色高亮</span> 代码中的 `/otherDocs/tagCloud.html` 是我的 [标签索引页](../../otherDocs/tagCloud.md) 的路径，这里你需要根据你的项目结构进行配置。
 
 <span style="background-color:#EAB30850;color:yellow">黄色高亮</span> 代码为自定义样式，相信你配置到这一组件，已经知道是什么意思，不再赘述。
 
