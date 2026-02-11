@@ -1,7 +1,7 @@
 ---
 title: 博客美化：Vitepress自动生成标签检索
 createAt: 2025-10-28 07:43:21
-updateAt: 2026-02-11 06:01:23
+updateAt: 2026-02-11 23:10:44
 tags:
   - 博客
   - 博客美化
@@ -541,8 +541,6 @@ onMounted(() => {
 </style>
 ```
 
-这里高亮代码同前文。
-
 ## 兼容性说明
 
 为了确保组件正常运行，请确保您的开发环境满足以下要求：
@@ -607,7 +605,7 @@ tags:
 
 **A:** 请检查 `tags.data.ts` 中的文件匹配模式。默认配置为 `docs/**/*.md`，如果您的文档在其他目录，请调整该路径。
 
-```ts
+```ts [tags.data.ts]
 // tags.data.ts
 export default createContentLoader("your/path/**/*.md", { ... })
 ```
@@ -620,7 +618,7 @@ export default createContentLoader("your/path/**/*.md", { ... })
 
 **A:** 修改 `dateUtils.ts` 中的 `formatDate` 函数即可自定义日期显示格式。
 
-```ts
+```ts [dateUtils.ts]
 // dateUtils.ts
 export function formatDate(d: DateComponents): string {
     return `${d.year}-${d.month}-${d.day}`; // 修改为你想要的格式
@@ -635,7 +633,7 @@ export function formatDate(d: DateComponents): string {
 
 **A:** 默认排序逻辑在 `dateUtils.ts` 的 `sortPostsByDate` 函数中，基于 `createAt` 字段降序排列。您可以修改该函数以改变排序规则（例如改为按 `updateAt` 排序）。
 
-```ts
+```ts [dateUtils.ts]
 // dateUtils.ts
 export function sortPostsByDate(posts: Post[]): Post[] {
     return posts.sort((a, b) => {
