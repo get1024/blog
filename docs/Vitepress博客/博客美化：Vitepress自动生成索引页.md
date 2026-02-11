@@ -7,6 +7,8 @@ tags:
   - 博客美化
 ---
 
+# 博客美化：Vitepress自动生成索引页
+
 > [!warning] 作者说
 > 本文档旨在说明如何根据 文档创建时间 **自动生成索引页**。此实现并非是通过 `npm` 依赖包导入插件，而是自定义 `vue` 组件，并使用官方文档提供的 [`createContentLoader`](https://vitepress.dev/zh/guide/data-loading#createcontentloader)  字段来帮助我们简化实现。
 > 本文档提供无脑式配置教程，如果需要理解实现原理，请参考 [官方文档](https://vitepress.dev/zh/guide/data-loading) 。

@@ -7,6 +7,8 @@ tags:
   - 博客美化
 ---
 
+# 博客美化：Vitepress自动生成标签检索
+
 ## 效果展示
 
 ![](assets/博客美化：Vitepress自动生成标签检索/博客美化：Vitepress自动生成标签检索-20251204104702.png)

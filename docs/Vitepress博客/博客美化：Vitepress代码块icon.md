@@ -7,6 +7,8 @@ tags:
   - 博客美化
 ---
 
+# 博客美化：Vitepress代码块icon
+
 ## 安装
 
 ::: code-group

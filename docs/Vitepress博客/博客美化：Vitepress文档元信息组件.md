@@ -7,6 +7,8 @@ tags:
   - 博客美化
 ---
 
+# 博客美化：Vitepress文档元信息组件
+
 ## 效果展示
 
 ![](assets/博客美化：Vitepress文档元信息组件/博客美化：Vitepress文档元信息组件-20251204104702.png)

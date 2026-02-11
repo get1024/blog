@@ -7,6 +7,8 @@ tags:
   - 博客美化
 ---
 
+# 博客美化：BackToTop-回到顶部按钮
+
 > [!tip]
 > 这里提供两个方案，方案一采用 [Backtop 回到顶部 \| Element Plus](https://element-plus.org/zh-CN/component/backtop.html) ，方案二从零开始写一个组件。
 
