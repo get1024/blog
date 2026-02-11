@@ -15,7 +15,7 @@ tags:
 
 ## 效果展示
 
-![](assets/博客美化：Vitepress自动生成索引页/博客美化：Vitepress自动生成索引页-20251204104702.png)
+![](assets/博客美化：Vitepress自动生成索引页/noteIndex.png)
 
 ## 前置介绍
 
@@ -91,8 +91,9 @@ tags：
 
 ```ts [node.data.ts]
 import { createContentLoader } from "vitepress";
-import { processPost, Post } from "./dateUtils";
+import { processPost, sortPostsByDate, Post } from "./dateUtils";
 
+// Helper function to group posts by year
 function groupByYear(posts: Post[]) {
     return posts.reduce((acc, post) => {
         const year = post.frontmatter.createAt.year;
@@ -104,10 +105,14 @@ function groupByYear(posts: Post[]) {
     }, {} as Record<number, Post[]>);
 }
 
-export default createContentLoader("📒文章/**/*.md", { // [!code warning]
+export default createContentLoader("docs/**/*.md", { // [!code warning]
     transform(rawPosts) {
+        // Process posts
         const processedPosts = rawPosts.map(processPost);
-        return groupByYear(processedPosts);
+        // Sort by date (descending) before grouping
+        const sortedPosts = sortPostsByDate(processedPosts);
+        // Group by year
+        return groupByYear(sortedPosts);
     },
 });
 ```
@@ -122,6 +127,9 @@ export default createContentLoader("📒文章/**/*.md", { // [!code warning]
 
 ### 配置 Vue 组件
 
+> [!IMPORTANT] 组件接口变更 (2026-02-11 v1.1.0)
+> `PostList` 组件已简化 Props 接口，仅接收 `posts` 数组，内部自动处理样式和日期格式化。请确保 `noteIndex.vue` 中传递的 `posts` 数据结构符合 `Post` 类型定义。
+
 新建 `📄:.vitepress/theme/components/PostList/noteIndex.vue` 文件，复制粘贴下述内容
 
 ```vue [nodeIndex.vue]
@@ -129,39 +137,21 @@ export default createContentLoader("📒文章/**/*.md", { // [!code warning]
 import { data as posts } from './note.data.ts'
 import PostList from './PostList.vue'
 
+// 计算文章总数
 const totalPosts = Object.values(posts).reduce((sum, yearPosts) => sum + yearPosts.length, 0)
 
 const groupedPosts = Object.entries(posts)
   .map(([year, yearPosts]) => ({
     year,
-    posts: yearPosts.sort((a, b) => {
-      const aDate = a.frontmatter.createAt;
-      const bDate = b.frontmatter.createAt;
-      if (bDate.month !== aDate.month) {
-        return bDate.month - aDate.month;
-      }
-      if (bDate.day !== aDate.day) {
-        return bDate.day - aDate.day;
-      }
-      if (bDate.hour !== aDate.hour) {
-        return bDate.hour - aDate.hour;
-      }
-      if (bDate.minute !== aDate.minute) {
-        return bDate.minute - aDate.minute;
-      }
-      if (bDate.second !== aDate.second) {
-        return bDate.second - aDate.second;
-      }
-      return 0;
-    }),
+    posts: yearPosts // note.data.ts 已经对 posts 进行了排序
   }))
-  .sort((a, b) => b.year - a.year);
+  .sort((a, b) => Number(b.year) - Number(a.year)); // 按年份降序排序
 </script>
 
 <template>
   <div class="note-index">
-    <p class="total-posts marker-fakeTitle">共计 {{ totalPosts }} 篇文章，RyanJoy在持续更新中~</p> <!-- [!code warning] -->
-    <div v-for="group in groupedPosts" :key="group.year">
+    <p class="total-posts marker-fakeTitle">共计 {{ totalPosts }} 篇文章</p> <!-- [!code warning] -->
+    <div v-for="group in groupedPosts" :key="group.year" class="year-group">
       <h2 class="noteIndex-h2">{{ group.year }}年</h2>
       <PostList :posts="group.posts" />
     </div>
@@ -169,14 +159,31 @@ const groupedPosts = Object.entries(posts)
 </template>
 
 <style scoped>
+.note-index {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
 .total-posts {
   margin-bottom: 1rem;
+  color: var(--vp-c-text-2);
+  font-size: 0.9rem;
+}
+
+.year-group {
+  display: flex;
+  flex-direction: column;
 }
 
 h2.noteIndex-h2 {
-  font-weight: bold;
-  font-size: 1.5em;
-  margin-top: 20px;
+  font-weight: 600;
+  font-size: 1.5rem;
+  margin-top: 0;
+  margin-bottom: 24px;
+  color: var(--vp-c-text-1);
+  display: flex;
+  align-items: center;
 }
 </style>
 ```
@@ -226,4 +233,80 @@ tags:
 <span class="marker-underline">***左侧*** 是</span><span class="marker-fakeTitle">📒文章分类</span><span class="marker-underline">，***下方*** 是</span><span class="marker-fakeTitle">📒文章更新时间树</span><span class="marker-underline">。选择一种方式进行 `浏览` 寻找你感兴趣的文章，或者 `ctrl+k` 搜索你需要的文章查阅吧！</span>
 
 <nodeIndex />
+```
+
+## 兼容性说明
+
+本组件依赖 VitePress 的数据加载器 API 及 Vue 3 的组合式 API，请确保您的项目满足以下最低版本要求：
+
+| 依赖项 | 最低版本 | 说明 |
+| :--- | :--- | :--- |
+| VitePress | `^1.0.0` | 依赖 `createContentLoader` API |
+| Node.js | `>=18.0.0` | 推荐使用 LTS 版本 |
+| pnpm | `^8.0.0` | 包管理器推荐 |
+
+推荐在 `package.json` 中配置 `engines` 字段以确保环境一致性：
+
+```json [package.json]
+{
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}
+```
+
+## FAQ
+
+以下是基于 `.vitepress/theme/components/PostList` 源码的常见问题解答：
+
+### Q1: 为什么我的文章没有显示在列表中？
+**A**: 请检查文章的 frontmatter 配置，确保 `createAt` 字段存在且格式正确。组件依赖 `dateUtils.ts` 进行日期解析。
+
+```ts [dateUtils.ts]
+// 确保日期格式为 YYYY-MM-DD HH:mm:ss
+const date = new Date(post.frontmatter.createAt);
+if (isNaN(date.getTime())) {
+    // 日期解析失败会导致文章被忽略或排序异常
+}
+```
+
+### Q2: 如何修改文章排序规则？
+**A**: 排序逻辑位于 `note.data.ts` 中的 `transform` 函数。默认按日期降序排列。
+
+```ts [note.data.ts]
+// Sort by date (descending) before grouping
+const sortedPosts = sortPostsByDate(processedPosts);
+```
+
+### Q3: 组件样式与我的主题不匹配怎么办？
+**A**: `PostList.vue` 使用了 VitePress 的 CSS 变量（如 `var(--vp-c-text-1)`），通常会自动适配。如果需要自定义，请覆盖 `.post-item` 等类名。
+
+```css [PostList.vue]
+.post-item {
+    background-color: var(--vp-c-bg-soft); /* 适配深色/浅色模式 */
+    border: 1px solid var(--vp-c-divider);
+}
+```
+
+### Q4: 为什么 `groupByYear` 函数将文章按年份分组？
+**A**: 这是为了在索引页按年份展示归档。如果需要按月份分组，可以修改 `note.data.ts` 中的 `groupByYear` 逻辑。
+
+```ts [note.data.ts]
+function groupByYear(posts: Post[]) {
+    return posts.reduce((acc, post) => {
+        const year = post.frontmatter.createAt.year;
+        // ...
+    }, {} as Record<number, Post[]>);
+}
+```
+
+### Q5: 如何更改扫描的文档路径？
+**A**: 修改 `createContentLoader` 的第一个参数。
+
+```ts [note.data.ts]
+// 扫描 docs 目录下所有 markdown 文件
+export default createContentLoader("docs/**/*.md", {
+    // ...
+});
 ```

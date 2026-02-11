@@ -11,7 +11,7 @@ tags:
 
 ## 效果展示
 
-![](assets/博客美化：Vitepress自动生成标签检索/博客美化：Vitepress自动生成标签检索-20251204104702.png)
+![](assets/博客美化：Vitepress自动生成标签检索/标签云.png)
 
 上方显示 `tagCloud` ，点击 `tag` 下方列出对应文章列表。
 
@@ -41,6 +41,8 @@ tags:
 
 ```ts [dateUtils.ts]
 import { ContentData } from "vitepress";
+
+// 日期结构接口
 export interface DateComponents {
     year: number;
     month: string;
@@ -49,6 +51,8 @@ export interface DateComponents {
     minute: string;
     second: string;
 }
+
+// 文章接口定义
 export interface Post {
     url: string;
     frontmatter: {
@@ -58,7 +62,9 @@ export interface Post {
         updateAt: DateComponents;
     };
 }
-export function splitDate(dateStr: string): DateComponents {
+
+// 日期处理函数：将日期字符串转换为结构化对象
+export function splitDate(dateStr: string | Date): DateComponents {
     const date = new Date(dateStr);
     return {
         year: date.getUTCFullYear(),
@@ -69,6 +75,8 @@ export function splitDate(dateStr: string): DateComponents {
         second: date.getUTCSeconds().toString().padStart(2, "0"),
     };
 }
+
+// 处理原始文章数据的函数
 export function processPost(post: ContentData): Post {
     return {
         url: post.url,
@@ -80,44 +88,62 @@ export function processPost(post: ContentData): Post {
         },
     };
 }
+
+// 获取日期的时间戳数值
+export function getDateValue(d: DateComponents): number {
+    return new Date(
+        `${d.year}-${d.month}-${d.day}T${d.hour}:${d.minute}:${d.second}Z`
+    ).getTime();
+}
+
+// 格式化日期显示
+export function formatDate(d: DateComponents): string {
+    return `${d.year}.${d.month}.${d.day} ${d.hour}:${d.minute}:${d.second}`;
+}
+
+// 按日期排序的函数 (降序)
 export function sortPostsByDate(posts: Post[]): Post[] {
     return posts.sort((a, b) => {
-        const dateA = new Date(
-            `${a.frontmatter.createAt.year}-${a.frontmatter.createAt.month}-${a.frontmatter.createAt.day}`
-        );
-        const dateB = new Date(
-            `${b.frontmatter.createAt.year}-${b.frontmatter.createAt.month}-${b.frontmatter.createAt.day}`
-        );
-        return dateB.getTime() - dateA.getTime();
+        return getDateValue(b.frontmatter.createAt) - getDateValue(a.frontmatter.createAt);
     });
-} 
+}
 ```
 
 ### 标签数据脚本
 
-新建 `📄:.vitepress/theme/components/TagCloud/tags.data.ts` 文件，复制粘贴下述内容
+新建 `📄:.vitepress/theme/components/PostList/tags.data.ts` 文件，复制粘贴下述内容
 
 ```ts [tags.data.ts]
 import { ContentData, createContentLoader } from "vitepress";
-import { processPost, sortPostsByDate } from "./dateUtils";
-import type { Post as BlogPost } from "./dateUtils";
-interface Tag {
+import { processPost, sortPostsByDate, Post } from "./dateUtils";
+
+// 标签接口定义
+export interface Tag {
     name: string;
     count: number;
-    posts: BlogPost[];
+    posts: Post[];
     size: number;
 }
+
+// 根据文章数量计算标签大小
 const calculateSize = (count: number, maxCount: number): number => {
     const minSize = 0.8;
     const maxSize = 1.7;
+    
+    // 处理边界情况
     if (count <= 1) return minSize;
     if (count >= maxCount) return maxSize;
     if (maxCount <= 1) return minSize;
+
+    // 使用对数函数使大小变化更平滑
     const logBase = Math.E;
     const normalizedCount = Math.log(count) / Math.log(logBase);
     const normalizedMax = Math.log(maxCount) / Math.log(logBase);
+    
+    // 使用 sigmoid-like 函数使变化更加平滑
     const scale = normalizedCount / normalizedMax;
     const smoothScale = 1 / (1 + Math.exp(-5 * (scale - 0.5)));
+    
     return minSize + (maxSize - minSize) * smoothScale;
 };
 
@@ -126,7 +152,10 @@ export { data };
 
 export default createContentLoader("docs/**/*.md", { // [!code warning]
     transform(raw: ContentData[]) {
-        const tagMap = new Map<string, { count: number; posts: BlogPost[] }>();
+        // 创建标签映射表
+        const tagMap = new Map<string, { count: number; posts: Post[] }>();
+
+        // 处理所有文章并统计标签信息
         raw.forEach((rawPost) => {
             const post = processPost(rawPost);
             const tags = post.frontmatter.tags || [];
@@ -139,9 +168,13 @@ export default createContentLoader("docs/**/*.md", { // [!code warning]
                 tagData.posts.push(post);
             });
         });
+
+        // 计算最大文章数
         const maxCount = Math.max(
             ...Array.from(tagMap.values()).map((t) => t.count)
         );
+
+        // 转换数据结构并添加样式属性
         const tags: Tag[] = Array.from(tagMap.entries())
             .map(([name, data]) => ({
                 name,
@@ -149,12 +182,11 @@ export default createContentLoader("docs/**/*.md", { // [!code warning]
                 posts: sortPostsByDate(data.posts),
                 size: calculateSize(data.count, maxCount),
             }))
-            .sort(() => Math.random() - 0.5);
+            .sort(() => Math.random() - 0.5); // 随机打乱标签顺序
 
         return tags;
     },
 });
-
 ```
 
 注意到，我这里高亮了一行代码，主要关注 `docs/**/*.md` 。这一参数表示项目根目录下 `docs/` 文件夹内所有 `.md` 文件。如果你需要检索某一指定文件夹如 `📂:'/笔记'` 下的所有 `.md` 文件，那么你需要修改参数为 `'笔记/**/*.md'` ，实际配置需要根据你的项目结构具体调整。
@@ -164,89 +196,44 @@ export default createContentLoader("docs/**/*.md", { // [!code warning]
 > [!tip] 作者说
 > 这里把「文章列表组件」和「标签云组件」进行解耦，主要目的是为了**复用**「文章列表组件」。
 
+> [!info] 更新说明 (2026-02-11 v1.1.0)
+> 组件接口定义已统一抽取至 `dateUtils.ts`，Props 定义更加简洁，样式全面升级为 macOS/Notion 风格。
+
 新建 `📄:.vitepress/theme/components/PostList/PostList.vue` ，复制粘贴下述内容：
 
 ```vue [PostList.vue]
 <script setup lang="ts">
-import { computed } from 'vue'
-import { data as tagsData } from './tags.data'
+import { formatDate, Post } from './dateUtils'
 
-interface Post {
-    url: string
-    frontmatter: {
-        title: string
-        tags?: string[]
-        createAt: {
-            year: number
-            month: string
-            day: string
-            hour: string
-            minute: string
-            second: string
-        }
-        updateAt: {
-            year: number
-            month: string
-            day: string
-            hour: string
-            minute: string
-            second: string
-        }
-    }
-}
-
-const props = defineProps<{
+defineProps<{
     posts: Post[]
 }>()
-
-const processedPosts = computed(() => {
-    return props.posts.map(post => {
-        const postTags = tagsData.reduce((acc: string[], tagItem) => {
-            if (tagItem.posts.some(p => p.url === post.url)) {
-                acc.push(tagItem.name)
-            }
-            return acc
-        }, [])
-
-        return {
-            ...post,
-            frontmatter: {
-                ...post.frontmatter,
-                tags: postTags
-            }
-        }
-    })
-})
 </script>
 
 <template>
     <ul class="post-list-ul">
-        <a class="post-link" v-for="post of processedPosts" :key="post.url" :href="post.url">
+        <a class="post-link" v-for="post of posts" :key="post.url" :href="post.url">
             <li class="post-item">
                 <div class="post-content">
-                    <div class="post-title-container">
+                    <div class="post-header">
                         <span class="post-title">{{ post.frontmatter.title }}</span>
-                        <span class="post-tags" v-if="post.frontmatter.tags?.length">
-                            <span class="tag-label">标签:</span>
+                        <div class="post-tags" v-if="post.frontmatter.tags?.length">
                             <span
                                 v-for="(tag, index) in post.frontmatter.tags"
                                 :key="tag"
                                 class="tag-item"
                             >
-                                {{ tag }}{{ index < post.frontmatter.tags.length - 1 ? ', ' : '' }}
+                                {{ tag }}
                             </span>
-                        </span>
+                        </div>
                     </div>
-                    <div class="post-dates">
-                        <span class="post-update">
-                            更新于 {{ post.frontmatter.updateAt.year }}.{{ post.frontmatter.updateAt.month }}.{{
-                                post.frontmatter.updateAt.day }} {{ post.frontmatter.updateAt.hour }}:{{
-                                post.frontmatter.updateAt.minute }}:{{ post.frontmatter.updateAt.second }}
+                    <div class="post-meta">
+                        <span class="meta-item">
+                            更新于 {{ formatDate(post.frontmatter.updateAt) }}
                         </span>
-                        <span class="post-date">
-                            创建于 {{ post.frontmatter.createAt.year }}.{{ post.frontmatter.createAt.month }}.{{
-                                post.frontmatter.createAt.day }} {{ post.frontmatter.createAt.hour }}:{{
-                                post.frontmatter.createAt.minute }}:{{ post.frontmatter.createAt.second }}
+                        <span class="meta-separator">·</span>
+                        <span class="meta-item">
+                            创建于 {{ formatDate(post.frontmatter.createAt) }}
                         </span>
                     </div>
                 </div>
@@ -260,133 +247,156 @@ const processedPosts = computed(() => {
     list-style: none;
     padding: 0;
     margin: 0;
-}   
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
 
 .post-link {
     text-decoration: none;
     display: block;
+    color: inherit;
 }
 
-.post-link:hover .post-title {
-    text-decoration: underline;
-}
-
+/* macOS / Notion Card Style */
 .post-item {
-    margin: 8px 0;
-    padding: 1rem;
-    transition: transform 0.16s ease, box-shadow 0s ease;
-    border: 2px solid var(--custom-border); /* [!code warning] */
-    border-radius: 0.5rem;
-    background-color: transparent;
+    padding: 16px 20px;
+    border: 1px solid var(--vp-c-divider);
+    border-radius: 12px;
+    background-color: var(--vp-c-bg-soft);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    position: relative;
+    overflow: hidden;
 }
 
 .post-item:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--custom-shadow); /* [!code warning] */
+    background-color: var(--vp-c-bg-alt);
+    border-color: var(--vp-c-brand-1);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.1);
 }
 
+/* Flex Column Layout */
 .post-content {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 10px;
 }
 
-.post-title-container {
-    flex: 1;
+.post-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem;
+    align-items: flex-start;
+    gap: 12px;
 }
 
 .post-title {
-    font-family: monospace;
-    text-decoration: none;
-    word-break: break-word;
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--vp-c-text-1);
+    transition: color 0.2s ease;
+}
+
+.post-link:hover .post-title {
+    color: var(--vp-c-brand-1);
+}
+
+/* Tag Pills */
+.post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
     flex-shrink: 0;
 }
 
-.post-tags {
-    color: gray;
-    font-family: monospace;
-    font-size: 0.76em;
-    font-weight: bolder;
-}
-
-.tag-label {
-    color: var(--custom-text); /* [!code warning] */
-}
-
 .tag-item {
-    color: var(--vp-c-brand-1);
-    margin: 0 2px;
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background-color: var(--vp-c-bg-mute);
+    color: var(--vp-c-text-2);
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
 }
 
-.post-dates {
+.post-item:hover .tag-item {
+    background-color: var(--vp-c-bg);
+    border-color: var(--vp-c-divider);
+}
+
+/* Metadata */
+.post-meta {
     display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--vp-c-text-3);
+    font-family: var(--vp-font-family-mono);
 }
 
-.post-update,
-.post-date {
-    color: var(--custom-text); /* [!code warning] */
-    font-family: monospace;
-    font-size: 0.76em;
-    font-weight: bolder;
+.meta-separator {
+    opacity: 0.5;
 }
 
-/* 移动端适配 */
-@media (max-width: 768px) {
-    .post-content {
-        gap: 0.8rem;
-    }
-
-    .post-title-container {
+/* Mobile Responsiveness */
+@media (max-width: 640px) {
+    .post-header {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 0.4rem;
+        gap: 8px;
     }
-
-    .post-dates {
-        flex-direction: column;
-        gap: 0.3rem;
+    
+    .post-tags {
+        width: 100%;
     }
-
-    .post-update,
-    .post-date {
-        white-space: normal;
-        min-width: unset;
+    
+    .post-meta {
+        flex-wrap: wrap;
+        gap: 6px;
+        font-size: 0.8rem;
     }
-
-    .post-item {
-        padding: 0.8rem;
+    
+    .meta-separator {
+        display: none;
+    }
+    
+    .meta-item {
+        display: block;
+        width: 100%;
     }
 }
 </style>
 ```
 
-注意到，在 `<style scoped></style>` 标签中，存在几行高亮代码，这是为了满足复用、项目样式统一的需求而自定义的样式，具体配置在别的文档中提到过，这里不再赘述，详细配置见这里： [个性化配置](博客美化：代码块、组美化方案.md#个性化配置) 。
-
 ### 标签云组件
 
-新建 `📄:.vitepress/theme/components/TagCloud/TagCloud.vue` ，复制粘贴下述内容：
+> [!info] 更新说明 (2026-02-11 v1.1.0)
+> 标签云组件增加了过渡动画与激活状态样式，交互体验更加流畅。
+
+新建 `📄:.vitepress/theme/components/PostList/TagCloud.vue` ，复制粘贴下述内容：
 
 ```vue [TagCloud.vue]
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import PostList from './PostList.vue'
 import { data as tags } from './tags.data.ts'
+import { Post } from './dateUtils'
+
+// 当前选中的标签
 const selectedTag = ref('')
-const selectedPosts = computed(() => {
+
+// 获取选中标签的文章列表
+const selectedPosts = computed<Post[]>(() => {
     if (!selectedTag.value) return []
     return tags.find(t => t.name === selectedTag.value)?.posts || []
 })
+
+// 标签点击处理函数
 const selectTag = (tag: string) => {
     selectedTag.value = selectedTag.value === tag ? '' : tag
 }
+
+// 组件挂载时检查URL参数
 onMounted(() => {
     const urlParams = new URLSearchParams(window.location.search)
     const tagParam = urlParams.get('tag')
@@ -398,6 +408,7 @@ onMounted(() => {
 
 <template>
   <div class="tag-section">
+    <!-- 标签云部分 -->
     <div class="tag-cloud">
       <div class="tags-container">
         <span
@@ -414,25 +425,33 @@ onMounted(() => {
       </div>
     </div>
 
-    <div v-if="selectedTag && selectedPosts.length" class="posts-list">
-      <h4>{{ selectedTag }} 相关文章 —— {{ selectedPosts.length }} 篇</h4>
-      <PostList :posts="selectedPosts" />
-    </div>
+    <!-- 文章列表部分 -->
+    <transition name="fade">
+      <div v-if="selectedTag && selectedPosts.length" class="posts-list">
+        <h3 class="tag-list-title">
+          <span class="highlight">{{ selectedTag }}</span> 
+          <span class="meta-info">相关文章 · {{ selectedPosts.length }} 篇</span>
+        </h3>
+        <PostList :posts="selectedPosts" />
+      </div>
+    </transition>
   </div>
 </template>
 
 <style scoped>
+/* 标签云容器布局 */
 .tag-section {
     display: flex;
     flex-direction: column;
+    gap: 24px;
 }
 
 .tag-cloud {
     background-color: var(--vp-c-bg-soft);
     border-radius: 12px;
-    padding: 20px;
-    margin: 1rem 0;
-    box-shadow: var(--custom-shadow); /* [!code warning] */
+    padding: 24px;
+    box-shadow: var(--custom-shadow);
+    border: 1px solid var(--vp-c-divider);
 }
 
 .tags-container {
@@ -440,38 +459,108 @@ onMounted(() => {
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
+    gap: 12px; /* Add explicit gap */
 }
 
+/* 单个标签样式 */
 .tag-item {
-    display: inline-block;
-    padding: 0.3rem 0.6rem;
-    border-radius: 1rem;
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 20px;
     cursor: pointer;
-    transition: all 0.16s ease;
-    color: var(--main-page-text); /* [!code warning] */
-    background: transparent;
+    transition: all 0.2s ease;
+    color: var(--vp-c-text-2);
+    background-color: var(--vp-c-bg-mute);
+    border: 1px solid transparent;
+    line-height: 1.2;
 }
 
 .tag-item:hover {
     color: var(--vp-c-brand-1);
+    background-color: var(--vp-c-bg);
+    border-color: var(--vp-c-brand-1);
     transform: translateY(-2px);
-    background-color: var(--main-page-bg); /* [!code warning] */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
+/* 激活状态样式 */
 .tag-item.active {
-    color: var(--vp-c-brand-1);
-    font-weight: bold;
+    background-color: var(--vp-c-brand-1);
+    color: white;
+    box-shadow: 0 4px 10px rgba(var(--vp-c-brand-1), 0.3);
 }
 
 .tag-count {
-    margin-left: 2px;
-    opacity: 0.8;
-    font-size: 0.9em;
+    margin-left: 6px;
+    opacity: 0.7;
+    font-size: 0.85em;
+    font-weight: normal;
 }
-</style> 
+
+.tag-item.active .tag-count {
+    color: rgba(255,255,255,0.8);
+}
+
+/* 列表部分样式 */
+.posts-list {
+    margin-top: 1rem;
+}
+
+.tag-list-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--vp-c-divider);
+}
+
+.tag-list-title .highlight {
+    color: var(--vp-c-brand-1);
+}
+
+.tag-list-title .meta-info {
+    font-size: 1rem;
+    font-weight: normal;
+    color: var(--vp-c-text-3);
+}
+
+/* 动画 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
 ```
 
 这里高亮代码同前文。
+
+## 兼容性说明
+
+为了确保组件正常运行，请确保您的开发环境满足以下要求：
+
+- **VitePress**: ^1.0.0
+- **Node.js**: >= 18.0.0
+- **pnpm**: 8.x (推荐)
+
+请在 `package.json` 中添加 `engines` 字段以确保环境兼容性：
+
+```json [package.json]
+{
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}
+```
 
 ## 组件注册
 
@@ -479,7 +568,7 @@ onMounted(() => {
 
 ```ts [index.ts]
 import DefaultTheme from 'vitepress/theme'
-import TagCloud from './components/TagCloud/TagCloud.vue' // [!code ++]
+import TagCloud from './components/PostList/TagCloud.vue' // [!code ++]
 // ...
 export const Theme: ThemeConfig = {
   extends: DefaultTheme,
@@ -508,4 +597,50 @@ tags:
 # 文档标签
 
 <TagCloud /> 
+```
+
+## FAQ
+
+以下是关于组件使用的常见问题解答：
+
+### Q1: 标签云没有显示任何数据？
+
+**A:** 请检查 `tags.data.ts` 中的文件匹配模式。默认配置为 `docs/**/*.md`，如果您的文档在其他目录，请调整该路径。
+
+```ts
+// tags.data.ts
+export default createContentLoader("your/path/**/*.md", { ... })
+```
+
+### Q2: 样式看起来很奇怪或不生效？
+
+**A:** 组件使用了 VitePress 的 CSS 变量（如 `var(--vp-c-brand-1)`）。请确保您使用的是 VitePress 默认主题或已正确配置了相关 CSS 变量。
+
+### Q3: 文章日期显示格式如何修改？
+
+**A:** 修改 `dateUtils.ts` 中的 `formatDate` 函数即可自定义日期显示格式。
+
+```ts
+// dateUtils.ts
+export function formatDate(d: DateComponents): string {
+    return `${d.year}-${d.month}-${d.day}`; // 修改为你想要的格式
+}
+```
+
+### Q4: 移动端列表显示拥挤？
+
+**A:** `PostList.vue` 包含了针对移动端的媒体查询（`@media (max-width: 640px)`），会自动调整布局为纵向排列。请确保 `<meta name="viewport">` 设置正确。
+
+### Q5: 排序顺序不正确？
+
+**A:** 默认排序逻辑在 `dateUtils.ts` 的 `sortPostsByDate` 函数中，基于 `createAt` 字段降序排列。您可以修改该函数以改变排序规则（例如改为按 `updateAt` 排序）。
+
+```ts
+// dateUtils.ts
+export function sortPostsByDate(posts: Post[]): Post[] {
+    return posts.sort((a, b) => {
+        // 改为按更新时间排序
+        return getDateValue(b.frontmatter.updateAt) - getDateValue(a.frontmatter.updateAt);
+    });
+}
 ```
