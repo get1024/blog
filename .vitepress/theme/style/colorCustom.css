@@ -20,34 +20,34 @@
     /* Custom Shadow - Softer, Apple-like */
     --custom-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 
-    /* Custom Containers - Notion Light Theme */
-    /* Info - Gray */
-    --custom-block-info-left: #9B9A97;
-    --custom-block-info-bg: #F1F1EF;
+    /* Custom Containers - Morandi / Low Saturation "High-End" Palette */
+    /* Info - Neutral Gray */
+    --custom-block-info-left: #7D7D7D;  /* 更纯粹的中性灰 */
+    --custom-block-info-bg: #F7F7F5;    /* 极淡的灰白 */
 
-    /* Tip - Green */
-    --custom-block-tip-left: #38A169;
-    --custom-block-tip-bg: #EDF3EC;
+    /* Tip - Sage Green (莫兰迪绿) */
+    --custom-block-tip-left: #5D8B6E;   /* 降低饱和度的鼠尾草绿 */
+    --custom-block-tip-bg: #F2F7F4;     /* 极淡的薄荷灰 */
 
-    /* Warning - Orange/Yellow */
-    --custom-block-warning-left: #D9730D;
-    --custom-block-warning-bg: #FFF9DB;
+    /* Warning - Muted Amber (柔和琥珀) */
+    --custom-block-warning-left: #C29653; /* 偏褐色的金黄，不刺眼 */
+    --custom-block-warning-bg: #FFFCF0;   /* 极淡的米色 */
 
-    /* Danger - Red */
-    --custom-block-danger-left: #E03E3E;
-    --custom-block-danger-bg: #FBE4E4;
+    /* Danger - Dusty Red (干枯红) */
+    --custom-block-danger-left: #C56868;  /* 柔和的砖红 */
+    --custom-block-danger-bg: #FCF5F5;    /* 极淡的红白 */
 
-    /* Note - Blue */
-    --custom-block-note-left: #3182CE;
-    --custom-block-note-bg: #E6F3F7;
+    /* Note - Slate Blue (板岩蓝) */
+    --custom-block-note-left: #6688AA;    /* 带有灰度的蓝 */
+    --custom-block-note-bg: #F2F6FA;      /* 极淡的灰蓝 */
 
-    /* Important - Purple */
-    --custom-block-important-left: #805AD5;
-    --custom-block-important-bg: #F3EEF8;
+    /* Important - Muted Purple (雾紫) */
+    --custom-block-important-left: #947CB0; /* 灰紫色 */
+    --custom-block-important-bg: #F7F5FA;   /* 极淡的紫白 */
 
-    /* Caution - Pink */
-    --custom-block-caution-left: #D53F8C;
-    --custom-block-caution-bg: #FCE8F3;
+    /* Caution - Dusty Rose (烟粉) */
+    --custom-block-caution-left: #C47898;   /* 降低饱和度的玫瑰粉 */
+    --custom-block-caution-bg: #FCF5F9;     /* 极淡的粉白 */
 
     /* Main Page */
     --main-page-bg: #FFFFFF;
@@ -77,43 +77,32 @@
     /* Custom Shadow */
     --custom-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 
-    /* Custom Containers - Notion Dark Theme */
+    /* Custom Containers - Notion Dark "Low Saturation" Theme */
     /* Info - Gray */
     --custom-block-info-left: #9B9A97;
-    --custom-block-info-bg: #2F2F2F;
+    --custom-block-info-bg: #252525;    /* 更深的灰，减少浮起感 */
 
     /* Tip - Green */
-    --custom-block-tip-left: #38A169;
-    --custom-block-tip-bg: #1C2B1F;
+    --custom-block-tip-left: #4E8A68;   /* 低饱和绿 */
+    --custom-block-tip-bg: #1E2621;     /* 极深灰绿 */
 
-    /* Warning - Orange/Yellow */
-    --custom-block-warning-left: #D9730D;
-    --custom-block-warning-bg: #3A2E0E;
+    /* Warning - Orange */
+    --custom-block-warning-left: #B89656; /* 低饱和黄 */
+    --custom-block-warning-bg: #29251A;   /* 极深棕黄 */
 
     /* Danger - Red */
-    --custom-block-danger-left: #E03E3E;
-    --custom-block-danger-bg: #3E1B1B;
+    --custom-block-danger-left: #BD5B5B;  /* 低饱和红 */
+    --custom-block-danger-bg: #2C1F1F;    /* 极深红灰 */
 
     /* Note - Blue */
-    --custom-block-note-left: #3182CE;
-    --custom-block-note-bg: #192A3A;
-
+    --custom-block-note-left: #5C8AB3;    /* 低饱和蓝 */
+    --custom-block-note-bg: #1D2329;      /* 极深蓝灰 */
+    
     /* Important - Purple */
-    --custom-block-important-left: #805AD5;
-    --custom-block-important-bg: #2D213F;
+    --custom-block-important-left: #947CB0;
+    --custom-block-important-bg: #242029;
 
     /* Caution - Pink */
-    --custom-block-caution-left: #D53F8C;
-    --custom-block-caution-bg: #3A1C28;
-
-    /* Main Page */
-    --main-page-bg: #191919;
-    --main-page-text: #D4D4D4;
-    --main-page-from: #202020;
-    --main-page-to: #2C2C2C;
-    --main-page-menu: #9B9A97;
-    --main-page-appearance: #3F3F3F;
-
-    --custom-toast-bg: rgba(255, 255, 255, 0.9);
-    --custom-toast-text: #000000;
+    --custom-block-caution-left: #C47898;
+    --custom-block-caution-bg: #291F24;
 }

@@ -26,6 +26,8 @@ import { NolebaseHighlightTargetedHeading } from '@nolebase/vitepress-plugin-hig
 import { NolebaseGitChangelogPlugin } from '@nolebase/vitepress-plugin-git-changelog/client'
 import TwoslashFloatingVue from '@shikijs/vitepress-twoslash/client'
 import { ElBacktop } from 'element-plus'
+import { inject } from '@vercel/analytics'
+import { injectSpeedInsights } from '@vercel/speed-insights'
 
 // ==========================
 // 组件
@@ -71,6 +73,9 @@ export const Theme: ThemeConfig = {
   enhanceApp,
 
   setup() {
+    inject()
+    injectSpeedInsights()
+
     //图片缩放
     const route = useRoute();
     const initZoom = () => {
