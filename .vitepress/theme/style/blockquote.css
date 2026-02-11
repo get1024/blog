@@ -1,19 +1,28 @@
-/* Notion-like Blockquote */
+/* Notion & macOS inspired Blockquote */
 .vp-doc blockquote {
-    border-radius: 4px;
-    padding: 16px 20px;
-    position: relative;
-    background-color: transparent; /* Notion 默认引用块背景通常是透明或极淡 */
-    border-left: 3px solid var(--vp-c-text-1); /* 更细的边框，颜色跟随文本或品牌色 */
-    color: var(--vp-c-text-2); /* 稍浅的文字颜色 */
-    font-style: normal; /* 移除斜体，更现代 */
-    margin: 1rem 0;
+    position: relative; /* 为伪元素定位 */
+    padding: 2px 0 2px 18px; /* 左侧留出空间给竖线，减少上下 padding */
+    margin: 12px 0;
+    background-color: transparent; /* 去除背景色 */
+    color: var(--vp-c-text-2);
+    font-style: normal;
+    font-size: 1rem;
+    line-height: 1.6;
+    border: none; /* 移除原有边框 */
+    border-radius: 0;
 }
 
-/* 如果想要带背景的引用块风格，可以取消注释下面 */
-/* 
-.vp-doc blockquote {
-    background-color: var(--custom-block-info-bg); 
-    border-left-color: var(--vp-c-brand-1);
-} 
-*/
+/* 独立的圆角竖线 */
+.vp-doc blockquote::before {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px; /* 竖线宽度 */
+    background-color: var(--vp-c-brand-1);
+    border-radius: 4px; /* 四个角圆角 */
+}
+
+/* 移除原有的覆盖样式，确保上面的样式生效 */
