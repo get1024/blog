@@ -1,7 +1,7 @@
 ---
 title: 博客美化：Table美化方案
 createAt: 2025-10-28 07:43:21
-updateAt: 2026-02-11 05:50:15
+updateAt: 2026-02-11 22:34:27
 tags:
   - 博客
   - 博客美化
@@ -25,7 +25,7 @@ tags:
 
 这里我选择采用 `Vitepress` 原生的 `markdown` 扩展配置。你只需要在对应位置添加**高亮代码**即可。
 
-```ts [.vitepress/config.mts] twoslash:no-line-numbers
+```ts [.vitepress/config.mts]
 import { defineConfig, type DefaultTheme } from "vitepress";
 // ...
 export default defineConfig({
@@ -68,45 +68,61 @@ export default defineConfig({
 ```css [tableCustom.css]
 /* 表格容器样式 */
 .vp-doc .custom-table-container {
-    width: 90%;
-    margin: 1rem auto;
+    min-width: 90%;
+    margin: 1.5rem auto;      
     overflow-x: auto;
+    border-radius: 8px; /* 表格容器圆角 */
+    border: 1px solid var(--custom-border); /* 外边框 */
 }
 
 /* 表格基础样式 */
 .vp-doc table {
-    display: table;          /* 确保表格以表格形式显示 */
-    width: 100%;            /* 占满容器宽度 */
-    table-layout: auto;     /* 根据内容自动分配列宽 */
-    border-collapse: collapse;  /* 合并边框 */
-    margin: 0;             /* 移除表格默认外边距 */
+    display: table;          
+    width: 100%;            
+    table-layout: auto;     
+    border-collapse: collapse;  
+    margin: 0;             
+    font-size: 14px; /* 稍微减小字号，更精致 */
 }
 
 /* 表头样式 */
 .vp-doc thead {
-    background-color: var(--vp-c-bg-soft);  /* 表头背景色 */
+    background-color: var(--custom-block-info-bg);  /* 使用自定义的淡灰色背景 */
+    border-bottom: 1px solid var(--custom-border);
 }
 
 /* 表头单元格样式 */
 .vp-doc th {
-    white-space: nowrap;     /* 防止表头文字换行 */
-    text-align: left;        /* 文字左对齐 */
-    padding: 12px 16px;       /* 内边距 */
-    margin: 0;             /* 确保无外边距 */
+    white-space: nowrap;     
+    text-align: left;        
+    padding: 12px 16px;       
+    margin: 0;             
+    font-weight: 600;
+    color: var(--vp-c-text-1);
+    border: none; /* 移除默认边框，只保留底边框 */
 }
 
 /* 表格单元格样式 */
 .vp-doc td {
-    padding: 12px 16px;       /* 内边距 */
-    text-align: left;        /* 文字左对齐 */
-    margin: 0;             /* 确保无外边距 */
+    padding: 12px 16px;       
+    text-align: left;        
+    margin: 0;             
+    border: none;
+    border-top: 1px solid var(--custom-border); /* 行间分隔线 */
+    color: var(--vp-c-text-2);
+}
+
+/* 表格行 Hover 效果 - Notion/MacOS 风格 */
+.vp-doc tbody tr:hover {
+    background-color: var(--vp-c-bg-soft);
 }
 
 /* 确保表格在小屏幕上也能正常显示 */
 @media (max-width: 768px) {
     .vp-doc .custom-table-container {
-        margin: 1rem auto;  /* 保持一致的外边距 */
-        padding: 0;         /* 移除内边距 */
+        margin: 1rem auto;  
+        padding: 0;         
+        border: none; /* 移动端移除外边框以增加可视面积 */
     }
 }
 ```
@@ -116,6 +132,16 @@ export default defineConfig({
 ```css [index.css]
 @import './tableCustom.css';
 ```
+
+## 配置说明
+
+本次更新引入了以下 CSS 变量，请确保你的主题（通常在 `colorCustom.css` 或 `var.css`）中已定义这些变量，以保证最佳显示效果：
+
+*   `--custom-border`: 表格容器外边框及行间分隔线颜色。
+*   `--custom-block-info-bg`: 表头背景色，推荐使用淡灰色。
+*   `--vp-c-text-1`: 主文本颜色（VitePress 默认变量）。
+*   `--vp-c-text-2`: 次要文本颜色（VitePress 默认变量）。
+*   `--vp-c-bg-soft`: 表格行 Hover 背景色（VitePress 默认变量）。
 
 ## 效果验证
 
