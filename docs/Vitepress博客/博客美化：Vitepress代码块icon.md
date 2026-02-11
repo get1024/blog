@@ -35,9 +35,9 @@ bun vitepress-plugin-group-icons -d
 
 首先配置 `Vitepress` 的核心配置文件 `📄:.vitepress/config.mts`
 
-```ts [.vitepress/config.ts]
+```ts [.vitepress/config.mts]
 import { defineConfig } from 'vitepress'
-import { groupIconMdPlugin, groupIconVitePlugin } from 'vitepress-plugin-group-icons' // [!code ++]
+import { groupIconMdPlugin, groupIconVitePlugin, localIconLoader } from 'vitepress-plugin-group-icons' // [!code ++]
 
 export default defineConfig({
   markdown: {
@@ -498,8 +498,8 @@ demo
 
 ```ts [config.mts]
 groupIconVitePlugin({
-	customIcon: {
-		pip: "vscode-icons:file-type-pip",
+  customIcon: {
+    pip: 'vscode-icons:file-type-pip',
 		docker: "vscode-icons:file-type-docker2",
 		".mts":"vscode-icons:file-type-typescript",
 		".cpp": "vscode-icons:file-type-cpp",
