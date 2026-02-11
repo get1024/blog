@@ -1,7 +1,7 @@
 ---
 title: 博客美化：Vitepress文档元信息组件
 createAt: 2025-10-28 07:43:21
-updateAt: 2026-02-11 05:53:47
+updateAt: 2026-02-11 22:47:30
 tags:
   - 博客
   - 博客美化
@@ -11,57 +11,166 @@ tags:
 
 ## 效果展示
 
-![](assets/博客美化：Vitepress文档元信息组件/博客美化：Vitepress文档元信息组件-20251204104702.png)
+![](assets/博客美化：Vitepress文档元信息组件/metadata.png)
+
+> **注**：最新版本采用了类 Notion 的极简设计风格，支持显示创建时间、更新时间、标签（Pill样式）、字数统计及预估阅读时间。
 
 ## 前提条件
 
-由于我在 `2025-02-06 10:53:51` 进行了一轮小规模更新，把 [博客美化：Vitepress自动生成标签检索](博客美化：Vitepress自动生成标签检索.md)、 [博客美化：Vitepress自动生成索引页](博客美化：Vitepress自动生成索引页.md)、 [博客美化：Vitepress文档元信息组件](博客美化：Vitepress文档元信息组件.md) 进行了功能联动，所以如果要配置此组件，首先需要配置完成 [博客美化：Vitepress自动生成标签检索](博客美化：Vitepress自动生成标签检索.md) 组件。
+由于本组件与标签检索功能联动，建议先配置 [博客美化：Vitepress自动生成标签检索](博客美化：Vitepress自动生成标签检索.md)。
 
 ## 组件定义
 
-### 元信息统计脚本
+### 1. 日期处理工具
 
-新建 `📄:.vitepress/theme/components/ArticleMetadata/functions.ts` 文件，复制粘贴下述内容
+由于组件需要处理日期格式，需要确保 `.vitepress/theme/components/PostList/dateUtils.ts` 文件存在。如果该文件已在其他教程中创建，请确保包含以下 `splitDate` 等核心函数。
+
+新建或更新 `📄:.vitepress/theme/components/PostList/dateUtils.ts`：
+
+```ts [dateUtils.ts]
+import { ContentData } from "vitepress";
+
+// 日期结构接口
+export interface DateComponents {
+    year: number;
+    month: string;
+    day: string;
+    hour: string;
+    minute: string;
+    second: string;
+}
+
+// 文章接口定义
+export interface Post {
+    url: string;
+    frontmatter: {
+        title: string;
+        tags?: string[];
+        createAt: DateComponents;
+        updateAt: DateComponents;
+    };
+}
+
+// 日期处理函数：将日期字符串转换为结构化对象
+export function splitDate(dateStr: string | Date): DateComponents {
+    const date = new Date(dateStr);
+    return {
+        year: date.getUTCFullYear(),
+        month: (date.getUTCMonth() + 1).toString().padStart(2, "0"),
+        day: date.getUTCDate().toString().padStart(2, "0"),
+        hour: date.getUTCHours().toString().padStart(2, "0"),
+        minute: date.getUTCMinutes().toString().padStart(2, "0"),
+        second: date.getUTCSeconds().toString().padStart(2, "0"),
+    };
+}
+
+// 处理原始文章数据的函数
+export function processPost(post: ContentData): Post {
+    return {
+        url: post.url,
+        frontmatter: {
+            title: post.frontmatter.title,
+            tags: post.frontmatter.tags,
+            createAt: splitDate(post.frontmatter.createAt),
+            updateAt: splitDate(post.frontmatter.updateAt),
+        },
+    };
+}
+
+// 获取日期的时间戳数值
+export function getDateValue(d: DateComponents): number {
+    return new Date(
+        `${d.year}-${d.month}-${d.day}T${d.hour}:${d.minute}:${d.second}Z`
+    ).getTime();
+}
+
+// 格式化日期显示
+export function formatDate(d: DateComponents): string {
+    return `${d.year}.${d.month}.${d.day} ${d.hour}:${d.minute}:${d.second}`;
+}
+
+// 按日期排序的函数 (降序)
+export function sortPostsByDate(posts: Post[]): Post[] {
+    return posts.sort((a, b) => {
+        return getDateValue(b.frontmatter.createAt) - getDateValue(a.frontmatter.createAt);
+    });
+}
+```
+
+### 2. 元信息统计脚本
+
+此脚本负责统计字数（支持 CJK 字符优化）、图片数量并计算预估阅读时间。
+
+新建或更新 `📄:.vitepress/theme/components/ArticleMetadata/functions.ts`：
 
 ```ts [functions.ts]
-const pattern
-    = /[a-zA-Z0-9_\u0392-\u03C9\u00C0-\u00FF\u0600-\u06FF\u0400-\u04FF]+|[\u4E00-\u9FFF\u3400-\u4DBF\uF900-\uFAFF\u3040-\u309F\uAC00-\uD7AF]+/g
+/**
+ * Word counting and read time estimation utilities
+ * Refined for better CJK support and cleaner implementation
+ */
+
+// Matches CJK characters or alphanumeric words
+const pattern = /[a-zA-Z0-9_\u0392-\u03C9\u00C0-\u00FF\u0600-\u06FF\u0400-\u04FF]+|[\u4E00-\u9FFF\u3400-\u4DBF\uF900-\uFAFF\u3040-\u309F\uAC00-\uD7AF]+/g
 
 export interface ArticleStats {
     wordCount: number;
     imageCount: number;
     readTimeMinutes: number;
 }
+
+/**
+ * Counts words in a string.
+ * CJK characters are counted individually.
+ * Latin/other words are counted by whitespace/punctuation boundaries.
+ */
 export function countWord(data: string): number {
-    const m = data.match(pattern)
-    let count = 0
-    if (!m) {
+    const matches = data.match(pattern)
+    if (!matches) {
         return 0
     }
-    for (let i = 0; i < m.length; i += 1) {
-        if (m[i].charCodeAt(0) >= 0x4E00) {
-            count += m[i].length
-        }
-        else {
+    
+    let count = 0
+    for (const match of matches) {
+        // If the match starts with a CJK character code (approximate range check)
+        // 0x4E00 is the start of common CJK Unified Ideographs
+        if (match.charCodeAt(0) >= 0x4E00) {
+            count += match.length
+        } else {
+            // For non-CJK (like English words), count as 1 word regardless of length
             count += 1
         }
     }
     return count
 }
+
+/**
+ * Estimates reading time for images.
+ * Strategy: 
+ * - First 10 images: 10s per image
+ * - Subsequent images: 3s per image
+ */
 export function calculateImageTime(imageCount: number): number {
     if (imageCount <= 10) {
-        return imageCount * 13 + (imageCount * (imageCount - 1)) / 2
+        return imageCount * 10
     }
-    return 175 + (imageCount - 10) * 3
+    // 100s for first 10 images + 3s for each subsequent image
+    return 100 + (imageCount - 10) * 3
 }
+
+/**
+ * Estimates reading time for text.
+ * Standard speed: 275 words per minute (CN/EN mix)
+ */
 export function calculateWordTime(wordCount: number): number {
-    return (wordCount / 275) * 60
+    return (wordCount / 275) * 60 // returns seconds
 }
+
 export function calculateReadTime(wordCount: number, imageCount: number): number {
-    const wordTime = calculateWordTime(wordCount)
-    const imageTime = calculateImageTime(imageCount)
-    return Math.ceil((wordTime + imageTime) / 60)
+    const wordTimeSec = calculateWordTime(wordCount)
+    const imageTimeSec = calculateImageTime(imageCount)
+    return Math.ceil((wordTimeSec + imageTimeSec) / 60)
 }
+
 export function getArticleStats(content: string, imageCount: number): ArticleStats {
     const wordCount = countWord(content)
     return {
@@ -72,9 +181,17 @@ export function getArticleStats(content: string, imageCount: number): ArticleSta
 }
 ```
 
-### 元信息组件
+**更新说明**：
+- **CJK 字符支持**：优化了字数统计逻辑，将 CJK 字符单独计数，非 CJK 单词按空格分隔计数，统计更准确。
+- **阅读时间算法**：
+  - 文字：按 275 字/分钟计算。
+  - 图片：前 10 张按 10 秒/张计算，超过 10 张部分按 3 秒/张计算（类 Medium 算法）。
 
-新建 `📄:.vitepress/theme/components/ArticleMetadata/ArticleMetadata.vue` ，复制粘贴下述内容
+### 3. 元信息组件
+
+这是核心 Vue 组件，采用 Notion 风格的列表布局，支持响应式与暗黑模式。
+
+新建或更新 `📄:.vitepress/theme/components/ArticleMetadata/ArticleMetadata.vue`：
 
 ```vue [ArticleMetadata.vue]
 <script lang="ts" setup>
@@ -85,9 +202,17 @@ import { splitDate } from '../PostList/dateUtils'
 
 const { page } = useData()
 const router = useRouter()
+
 const date = computed(() => page.value.frontmatter.createAt)
+const updateDate = computed(() => {
+    const val = page.value.lastUpdated || page.value.frontmatter.updateAt
+    if (typeof val === 'number') return new Date(val)
+    return val
+})
 const formattedDate = computed(() => date.value ? splitDate(date.value) : null)
-const tags = computed(() => page.value.frontmatter.tags || ['待定'])
+const formattedUpdateDate = computed(() => updateDate.value ? splitDate(updateDate.value) : null)
+const tags = computed(() => page.value.frontmatter.tags || [])
+
 const articleStats = ref<ArticleStats>({
     wordCount: 0,
     imageCount: 0,
@@ -95,7 +220,10 @@ const articleStats = ref<ArticleStats>({
 })
 
 function analyze() {
+    // Clean up any existing meta description elements
     document.querySelectorAll('.meta-des').forEach(v => v.remove())
+    
+    // Analyze content from the DOM after mounting
     const docDomContainer = window.document.querySelector('#VPContent')
     const imgs = docDomContainer?.querySelectorAll<HTMLImageElement>(
         '.content-container .main img'
@@ -104,155 +232,185 @@ function analyze() {
 
     articleStats.value = getArticleStats(words, imgs?.length || 0)
 }
+
 onMounted(() => {
     analyze()
 })
+
 const handleTagClick = (tag: string) => {
-    router.go(`/otherDocs/tagCloud.html?tag=${encodeURIComponent(tag)}`)  // [!code error]
+    router.go(`/otherDocs/tagCloud.html?tag=${encodeURIComponent(tag)}`)
 }
 </script>
 
-<template>
-    <div class="ArticleMetadata-word">
-        <p class="ArticleMetadata-create" v-if="formattedDate">
-            <svg t="1738918990663" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
-                p-id="26494" width="15" height="15">
-                <path
-                    d="M800.280706 320.674487l71.413469-70.936609-85.505419-85.385693-78.57866 78.818114c-41.080627-24.600281-87.057775-41.857317-136.139633-49.619095l-3.344165-45.499263H450.854385l-3.104711 45.499263c-48.963155 8.060583-94.940302 25.13854-136.02093 49.9179l-76.130911-78.93784-87.535659 83.356476 71.175039 73.145927c-58.755172 67.651796-94.342692 155.904793-94.342691 252.635881 0 212.689077 172.384116 385.192919 385.073192 385.192919s385.013841-172.563194 385.013841-385.192919c-0.059352-96.732112-35.766598-185.343265-94.700849-252.995061zM509.908362 856.995405c-156.50138 0-283.386232-126.884852-283.386232-283.32688 0-156.50138 126.884852-283.386232 283.386232-283.386232S793.294594 417.167145 793.294594 573.668525c0 156.442028-126.884852 283.32688-283.386232 283.32688z m23.824615-538.709315h-67.771523v287.446711h245.768473v-79.475076H533.792329V318.28609h-0.059352z m-106.882286-185.341219h166.115342c16.59905 0 30.213116-13.434987 30.213116-30.094412V87.74339c0-16.779152-13.614066-25.496697-30.213116-25.496697H426.850691c-16.59905 0-30.213116 8.717546-30.213115 25.496697v15.107069c-0.001023 16.659425 13.613042 30.094412 30.213115 30.094412z"
-                    p-id="26495" fill="var(--main-page-text)"></path>
-            </svg>
-            <span>创建: {{ formattedDate.year }}.{{ formattedDate.month }}.{{ formattedDate.day }} {{ formattedDate.hour
-                }}:{{ formattedDate.minute }}:{{ formattedDate.second }}</span>
-            &nbsp;
-            <svg t="1736647717345" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
-                p-id="9217" width="16" height="16">
-                <path
-                    d="M512 101.376a410.624 410.624 0 1 1 0 821.248 410.624 410.624 0 0 1 0-821.248z m0 74.666667a336.042667 336.042667 0 1 0 0 672 336.042667 336.042667 0 0 0 0-672.085334z m149.333333 149.333333a37.290667 37.290667 0 0 1 6.741334 73.984l-6.741334 0.682667H549.290667v298.666666a37.290667 37.290667 0 0 1-73.984 6.656l-0.682667-6.741333v-298.666667H362.666667a37.290667 37.290667 0 0 1-6.741334-73.984l6.741334-0.597333h298.666666z"
-                    p-id="9218" fill="var(--main-page-text)"></path>
-            </svg>
-            <span>字数: {{ articleStats.wordCount }}</span>
-            &nbsp;
-            <svg t="1736647890935" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
-                p-id="14827" width="16" height="16">
-                <path
-                    d="M938.666667 553.92V768c0 64.8-52.533333 117.333333-117.333334 117.333333H202.666667c-64.8 0-117.333333-52.533333-117.333334-117.333333V256c0-64.8 52.533333-117.333333 117.333334-117.333333h618.666666c64.8 0 117.333333 52.533333 117.333334 117.333333v297.92z m-64-74.624V256a53.333333 53.333333 0 0 0-53.333334-53.333333H202.666667a53.333333 53.333333 0 0 0-53.333334 53.333333v344.48A290.090667 290.090667 0 0 1 192 597.333333a286.88 286.88 0 0 1 183.296 65.845334C427.029333 528.384 556.906667 437.333333 704 437.333333c65.706667 0 126.997333 16.778667 170.666667 41.962667z m0 82.24c-5.333333-8.32-21.130667-21.653333-43.648-32.917333C796.768 511.488 753.045333 501.333333 704 501.333333c-121.770667 0-229.130667 76.266667-270.432 188.693334-2.730667 7.445333-7.402667 20.32-13.994667 38.581333-7.68 21.301333-34.453333 28.106667-51.370666 13.056-16.437333-14.634667-28.554667-25.066667-36.138667-31.146667A222.890667 222.890667 0 0 0 192 661.333333c-14.464 0-28.725333 1.365333-42.666667 4.053334V768a53.333333 53.333333 0 0 0 53.333334 53.333333h618.666666a53.333333 53.333333 0 0 0 53.333334-53.333333V561.525333zM320 480a96 96 0 1 1 0-192 96 96 0 0 1 0 192z m0-64a32 32 0 1 0 0-64 32 32 0 0 0 0 64z"
-                    fill="var(--main-page-text)" p-id="14828"></path>
-            </svg>
-            <span>图片: {{ articleStats.imageCount }}</span>
-        </p>
-        <p class="ArticleMetadata-tags">
-            <svg t="1738476810960" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
-                p-id="4127" width="16" height="16">
-                <path
-                    d="M483.2 790.3L861.4 412c1.7-1.7 2.5-4 2.3-6.3l-25.5-301.4c-0.7-7.8-6.8-13.9-14.6-14.6L522.2 64.3c-2.3-0.2-4.7 0.6-6.3 2.3L137.7 444.8c-3.1 3.1-3.1 8.2 0 11.3l334.2 334.2c3.1 3.2 8.2 3.2 11.3 0z m62.6-651.7l224.6 19 19 224.6L477.5 694 233.9 450.5l311.9-311.9z"
-                    p-id="4128" fill="var(--main-page-text)"></path>
-                <path d="M605.958852 324.826232a48 48 0 1 0 67.881066-67.883435 48 48 0 1 0-67.881066 67.883435Z"
-                    p-id="4129" fill="var(--main-page-text)"></path>
-                <path
-                    d="M889.7 539.8l-39.6-39.5c-3.1-3.1-8.2-3.1-11.3 0l-362 361.3-237.6-237c-3.1-3.1-8.2-3.1-11.3 0l-39.6 39.5c-3.1 3.1-3.1 8.2 0 11.3l243.2 242.8 39.6 39.5c3.1 3.1 8.2 3.1 11.3 0l407.3-406.6c3.1-3.1 3.1-8.2 0-11.3z"
-                    p-id="4130" fill="var(--main-page-text)"></path>
-            </svg>
 
-            <span class="tag-content">标签:
-                <span v-for="(tag, index) in tags" :key="tag" class="tag-item" @click="handleTagClick(tag)">
-                    {{ tag }}{{ index < tags.length - 1 ? ',  ' : '' }} </span>
+<template>
+    <div class="article-metadata-container">
+        
+        <!-- Created At -->
+        <div class="meta-row" v-if="formattedDate">
+            <div class="meta-label">
+                <span class="meta-icon">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                 </span>
-        </p>
+                <span class="label-text">Created Time</span>
+            </div>
+            <div class="meta-value">
+                {{ formattedDate.year }}-{{ formattedDate.month }}-{{ formattedDate.day }} {{ formattedDate.hour }}:{{ formattedDate.minute }}
+            </div>
+        </div>
+
+        <!-- Updated At -->
+        <div class="meta-row" v-if="formattedUpdateDate">
+            <div class="meta-label">
+                <span class="meta-icon">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </span>
+                <span class="label-text">Last Updated</span>
+            </div>
+            <div class="meta-value">
+                {{ formattedUpdateDate.year }}-{{ formattedUpdateDate.month }}-{{ formattedUpdateDate.day }} {{ formattedUpdateDate.hour }}:{{ formattedUpdateDate.minute }}
+            </div>
+        </div>
+
+        <!-- Tags -->
+        <div class="meta-row" v-if="tags.length > 0">
+            <div class="meta-label">
+                <span class="meta-icon">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                </span>
+                <span class="label-text">Tags</span>
+            </div>
+            <div class="meta-value tags-wrapper">
+                <span class="tag-pill" 
+                      v-for="tag in tags" 
+                      :key="tag" 
+                      @click="handleTagClick(tag)">
+                    {{ tag }}
+                </span>
+            </div>
+        </div>
+
+        <!-- Word Count & Read Time (Combined or Separate) -->
+        <div class="meta-row">
+            <div class="meta-label">
+                <span class="meta-icon">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                </span>
+                <span class="label-text">Word Count</span>
+            </div>
+            <div class="meta-value">{{ articleStats.wordCount }} words</div>
+        </div>
+        
+         <div class="meta-row">
+            <div class="meta-label">
+                <span class="meta-icon">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </span>
+                <span class="label-text">Read Time</span>
+            </div>
+            <div class="meta-value">{{ articleStats.readTimeMinutes }} min</div>
+        </div>
+
     </div>
 </template>
 
+
 <style scoped>
-.ArticleMetadata-word {
-    color: var(--custom-text);  /* [!code warning] */
-    font-family: monospace;
-    white-space: nowrap;
-    width: fit-content;
-    min-width: 200px;
-    font-size: 0.75em;
-    font-weight: bolder;
+.article-metadata-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0px; /* Notion rows are tight */
+    margin-top: 24px;
+    margin-bottom: 32px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    color: var(--vp-c-text-1);
 }
 
-.ArticleMetadata-word p {
+.meta-row {
+    display: flex;
+    align-items: flex-start; /* Align top for multiline values */
+    padding: 6px 0;
+    min-height: 32px;
+}
+
+.meta-label {
     display: flex;
     align-items: center;
-    margin: 0px;
-}
-
-.ArticleMetadata-word p svg {
-    margin-right: 2px;
+    width: 160px; /* Fixed width for labels */
     flex-shrink: 0;
-    vertical-align: middle;
+    color: var(--vp-c-text-2);
+    gap: 8px;
 }
 
-.ArticleMetadata-word p span {
-    line-height: 1.5;
+.meta-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--vp-c-text-2);
+    opacity: 0.8;
 }
 
-.tag-item {
+.label-text {
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.meta-value {
+    flex-grow: 1;
+    color: var(--vp-c-text-1);
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    line-height: 1.5; /* Better reading for text */
+}
+
+.tags-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.tag-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background-color: rgba(120, 119, 116, 0.15); /* Notion-like gray pill */
+    color: var(--vp-c-text-1);
+    font-size: 13px;
     cursor: pointer;
-    color: var(--vp-c-brand-1);
+    transition: all 0.2s ease;
+    line-height: 1.4;
 }
 
-.tag-item:hover {
-    color: var(--vp-c-brand-3);
-    text-decoration: underline;
+.tag-pill:hover {
+    background-color: rgba(120, 119, 116, 0.25);
+}
+
+/* Dark mode adjustment for pills if needed, but rgba works well */
+:root.dark .tag-pill {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+:root.dark .tag-pill:hover {
+    background-color: rgba(255, 255, 255, 0.15);
 }
 </style>
 ```
 
-<span style="background-color:#F43F5E50;color:red">红色高亮</span> 代码中的 `/otherDocs/tagCloud.html` 是我的 [标签索引页](../../otherDocs/tagCloud.md) 的路径，这里你需要根据你的项目结构进行配置。
+**功能特性**：
+- **Notion 风格 UI**：使用行布局、SVG 图标和灰色 Pill 样式标签，视觉干扰更小。
+- **双时间显示**：支持显示 `Created Time`（创建时间）和 `Last Updated`（最后更新时间）。
+- **标签交互**：点击标签可跳转到标签云页面（需配合 [tagCloud.md](../../otherDocs/tagCloud.md) 使用）。
+- **自动统计**：组件挂载后自动扫描 `#VPContent` 内容进行字数和图片统计。
 
-<span style="background-color:#EAB30850;color:yellow">黄色高亮</span> 代码为自定义样式，相信你配置到这一组件，已经知道是什么意思，不再赘述。
+## 版本同步记录
 
-## 组件注册
-
-在 `Vitepress` 主题配置文件 `📄:.vitepress/theme/index.ts` 中添加：
-
-```ts [index.ts]
-import DefaultTheme from 'vitepress/theme'
-import ArticleMetadata from "./components/ArticleMetadata/ArticleMetadata.vue" // [!code ++]
-// ...
-export const Theme: ThemeConfig = {
-  extends: DefaultTheme,
-  // ...
-  enhanceApp = ({ app, router }: EnhanceAppContext) => {
-  	// ...
-  	app.component('ArticleMetadata', ArticleMetadata) // [!code ++]
-  }
-  // ...
-}
-```
-
-## 组件使用
-
-不同于其余组件，本组件需要全局起效，所以我么需要配置 `Vitepress` 的配置文件 `📄:.vitepress/config.mts` ，具体配置如下
-
-```ts [config.mts] twoslash:no-line-numbers
-import { defineConfig, type DefaultTheme } from "vitepress";
-export default defineConfig({
-  lang: "zh-CN",
-  title: "RyanJoy的博客",
-  description: "RyanJoy的博客",
-  lastUpdated: true,
-  appearance: true,
-  // ...
-  vite: {
-  	// ...
-  },
-  themeConfig: {
-    logo: "/logo.png",
-    // ...
-  },
-  markdown: {
-    config: (md) => {
-      md.renderer.rules.heading_close = (tokens, idx, options, env, slf) => { // [!code ++]
-        let htmlResult = slf.renderToken(tokens, idx, options); // [!code ++]
-        if (tokens[idx].tag === "h1") htmlResult += `<ArticleMetadata />`; // [!code ++]
-        return htmlResult; // [!code ++]
-      }; // [!code ++]
-      // ...
-    },
-    // ...
-  },
-});
-```
+- **同步时间**：2026-02-11
+- **变更摘要**：
+  - 同步 `ArticleMetadata.vue` 最新代码，采用 Notion 风格 UI。
+  - 同步 `functions.ts` 优化后的字数统计与阅读时间算法。
+  - 补充 `dateUtils.ts` 依赖代码。
+  - 修正过时的样式配置说明。
