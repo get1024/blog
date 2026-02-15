@@ -35,7 +35,7 @@ bun vitepress-plugin-group-icons -d
 
 首先配置 `Vitepress` 的核心配置文件 `📄:.vitepress/config.mts`
 
-```ts [.vitepress/config.mts]
+```ts [config.mts]
 import { defineConfig } from 'vitepress'
 import { groupIconMdPlugin, groupIconVitePlugin, localIconLoader } from 'vitepress-plugin-group-icons' // [!code ++]
 
@@ -55,7 +55,7 @@ export default defineConfig({
 
 再配置 `Vitepress` 的主题配置文件 `📄:.vitepress/theme/index.ts`
 
-```ts [.vitepress/theme/index.ts]
+```ts [index.ts]
 import Theme from 'vitepress/theme'
 import 'virtual:group-icons.css' // [!code ++]
 
@@ -133,7 +133,7 @@ export default defineConfig({
 
 输出
 
-```js [vite.config.js]
+```js [vite.config.ts]
 import legacy from '@vitejs/plugin-legacy'
 import { defineConfig } from 'vite'
 
@@ -518,7 +518,7 @@ groupIconVitePlugin({
 
 你可以从 [vscode-icons](https://github.com/vscode-icons/vscode-icons/tree/master/icons)、本地 `SVG` 文件或者外部 `URL` 链接进行图标自定义操作。
 
-```ts {2,13-19} [.vitepress/config.ts]
+```ts {2,13-19} [config.ts]
 import { defineConfig } from 'vitepress'
 import { groupIconMdPlugin, groupIconVitePlugin, localIconLoader } from 'vitepress-plugin-group-icons'
 
